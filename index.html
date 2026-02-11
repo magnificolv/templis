@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Manis Templis">
+    <meta name="description" content="Ikdienas veselības ieradumu trackings">
+    <title>Manis Templis</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            overscroll-behavior-y: contain;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function TempleTracker() {
+            const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+            const [todayData, setTodayData] = useState(null);
+            const [view, setView] = useState('today');
+            const [weekData, setWeekData] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [showInstall, setShowInstall] = useState(false);
+            const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+            const goodHabits = [
+                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘' },
+                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚' },
+                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪' },
+                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️' },
+                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑' },
+                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩' },
+                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗' },
+                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊' }
+            ];
+
+            const badHabits = [
+                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺' },
+                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬' },
+                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔' }
+            ];
+
+            useEffect(() => {
+                // PWA install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    setDeferredPrompt(e);
+                    setShowInstall(true);
+                });
+
+                // Check if already installed
+                window.addEventListener('appinstalled', () => {
+                    console.log('PWA installed');
+                    setShowInstall(false);
+                });
+
+                loadTodayData();
+                loadWeekData();
+            }, [selectedDate]);
+
+            const handleInstall = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response: ${outcome}`);
+                    setDeferredPrompt(null);
+                    setShowInstall(false);
+                }
+            };
+
+            const loadTodayData = async () => {
+                setLoading(true);
+                try {
+                    const result = await window.storage.get(`tracking:${selectedDate}`);
+                    if (result && result.value) {
+                        setTodayData(JSON.parse(result.value));
+                    } else {
+                        setTodayData({});
+                    }
+                } catch (error) {
+                    console.log('No data for this date');
+                    setTodayData({});
+                }
+                setLoading(false);
+            };
+
+            const loadWeekData = async () => {
+                try {
+                    const result = await window.storage.list('tracking:');
+                    if (result && result.keys) {
+                        const dates = result.keys.map(key => key.replace('tracking:', ''));
+                        
+                        const currentMonth = selectedDate.slice(0, 7);
+                        const currentMonthDates = dates.filter(date => date.startsWith(currentMonth));
+                        
+                        const monthPromises = currentMonthDates.map(async (date) => {
+                            try {
+                                const data = await window.storage.get(`tracking:${date}`);
+                                return { date, data: data ? JSON.parse(data.value) : {} };
+                            } catch {
+                                return { date, data: {} };
+                            }
+                        });
+                        
+                        const monthData = await Promise.all(monthPromises);
+                        setWeekData(monthData);
+                    }
+                } catch (error) {
+                    console.log('Error loading month data');
+                    setWeekData([]);
+                }
+            };
+
+            const updateHabit = async (habitId, value) => {
+                const newData = { ...todayData, [habitId]: value };
+                setTodayData(newData);
+                
+                try {
+                    await window.storage.set(`tracking:${selectedDate}`, JSON.stringify(newData));
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                }
+            };
+
+            const calculateStreak = (habitId) => {
+                let streak = 0;
+                const sortedDays = [...weekData].sort((a, b) => b.date.localeCompare(a.date));
+                
+                for (let day of sortedDays) {
+                    if (day.data[habitId] && day.data[habitId] !== '0' && day.data[habitId] !== '') {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                return streak;
+            };
+
+            const HabitCard = ({ habit, isGood }) => {
+                const value = todayData?.[habit.id] || '';
+                const streak = calculateStreak(habit.id);
+                
+                return (
+                    <div className={`p-4 rounded-lg border-2 ${isGood ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl">{habit.icon}</span>
+                                <span className="font-semibold text-gray-800">{habit.name}</span>
+                            </div>
+                            {streak > 0 && (
+                                <div className="flex items-center gap-1 text-orange-600 text-sm font-bold">
+                                    <span>🏆</span>
+                                    {streak}d
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="flex gap-2">
+                            {habit.unit ? (
+                                <>
+                                    <input
+                                        type="number"
+                                        inputMode="numeric"
+                                        value={value}
+                                        onChange={(e) => updateHabit(habit.id, e.target.value)}
+                                        placeholder="0"
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                                    />
+                                    <span className="px-3 py-2 text-gray-600 font-medium">{habit.unit}</span>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={() => updateHabit(habit.id, value ? '' : '✓')}
+                                    className={`flex-1 py-3 rounded-lg font-semibold transition-all active:scale-95 ${
+                                        value 
+                                            ? 'bg-green-500 text-white' 
+                                            : 'bg-gray-200 text-gray-600'
+                                    }`}
+                                >
+                                    {value ? '✓ Izdarīts' : 'Atzīmēt'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const WeekView = () => {
+                const calculateHabitStats = (habitId, habitUnit) => {
+                    let count = 0;
+                    let total = 0;
+                    
+                    weekData.forEach(({ data }) => {
+                        const value = data[habitId];
+                        if (value && value !== '0' && value !== '') {
+                            count++;
+                            if (habitUnit) {
+                                const numValue = parseFloat(value) || 0;
+                                total += numValue;
+                            }
+                        }
+                    });
+                    
+                    return { count, total };
+                };
+
+                const currentMonth = new Date(selectedDate).toLocaleDateString('lv-LV', { month: 'long', year: 'numeric' });
+
+                return (
+                    <div className="space-y-6">
+                        <div className="text-center">
+                            <h3 className="text-xl font-bold text-gray-800">{currentMonth}</h3>
+                        </div>
+
+                        <div className="bg-green-50 border-2 border-green-200 rounded-lg p-5">
+                            <h3 className="text-xl font-bold text-green-700 mb-4 flex items-center gap-2">
+                                <span>📈</span>
+                                Pozitīvie
+                            </h3>
+                            <div className="space-y-3">
+                                {goodHabits.map(habit => {
+                                    const stats = calculateHabitStats(habit.id, habit.unit);
+                                    if (stats.count === 0) return null;
+                                    
+                                    return (
+                                        <div key={habit.id} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xl">{habit.icon}</span>
+                                                <span className="font-medium text-gray-800">{habit.name}</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-green-600">{stats.count}x</div>
+                                                {habit.unit && stats.total > 0 && (
+                                                    <div className="text-sm text-gray-600">
+                                                        kopā {Math.round(stats.total)} {habit.unit}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {goodHabits.every(h => calculateHabitStats(h.id, h.unit).count === 0) && (
+                                    <div className="text-center text-gray-500 py-4">
+                                        Vēl nav datu šajā mēnesī
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-5">
+                            <h3 className="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
+                                <span>📉</span>
+                                Negatīvie
+                            </h3>
+                            <div className="space-y-3">
+                                {badHabits.map(habit => {
+                                    const stats = calculateHabitStats(habit.id, habit.unit);
+                                    if (stats.count === 0) return null;
+                                    
+                                    return (
+                                        <div key={habit.id} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xl">{habit.icon}</span>
+                                                <span className="font-medium text-gray-800">{habit.name}</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-red-600">{stats.count}x</div>
+                                                {habit.unit && stats.total > 0 && (
+                                                    <div className="text-sm text-gray-600">
+                                                        kopā {Math.round(stats.total)} {habit.unit}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {badHabits.every(h => calculateHabitStats(h.id, h.unit).count === 0) && (
+                                    <div className="text-center text-green-600 font-semibold py-4">
+                                        🎉 Šajā mēnesī neviens negatīvs ieradums!
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+                        <div className="text-xl text-gray-600">Ielādē...</div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-8 px-4 pt-4">
+                    {showInstall && (
+                        <div className="install-prompt bg-blue-500 text-white p-4 rounded-lg shadow-lg">
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="flex-1">
+                                    <p className="font-semibold">Instalēt aplikāciju?</p>
+                                    <p className="text-sm opacity-90">Pievienot sākuma ekrānam</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={handleInstall}
+                                        className="bg-white text-blue-500 px-4 py-2 rounded font-semibold active:scale-95"
+                                    >
+                                        Instalēt
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowInstall(false)}
+                                        className="bg-blue-600 text-white px-3 py-2 rounded active:scale-95"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-6">
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">🏛️ Manis Templis</h1>
+                            <p className="text-gray-600 text-sm">Katru dienu tuvāk labākai versijai</p>
+                        </div>
+
+                        <div className="flex gap-2 mb-4 bg-white rounded-lg p-2 shadow-sm">
+                            <button
+                                onClick={() => setView('today')}
+                                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all active:scale-95 ${
+                                    view === 'today' 
+                                        ? 'bg-blue-500 text-white' 
+                                        : 'text-gray-600'
+                                }`}
+                            >
+                                Šodien
+                            </button>
+                            <button
+                                onClick={() => setView('stats')}
+                                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all active:scale-95 ${
+                                    view === 'stats' 
+                                        ? 'bg-blue-500 text-white' 
+                                        : 'text-gray-600'
+                                }`}
+                            >
+                                Statistika
+                            </button>
+                        </div>
+
+                        <div className="mb-4 bg-white rounded-lg p-4 shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <span className="text-blue-500">📅</span>
+                                <input
+                                    type="date"
+                                    value={selectedDate}
+                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    max={new Date().toISOString().split('T')[0]}
+                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                                />
+                            </div>
+                        </div>
+
+                        {view === 'today' ? (
+                            <>
+                                <div className="mb-6">
+                                    <h2 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                                        <span>📈</span>
+                                        Veselīgas lietas
+                                    </h2>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {goodHabits.map(habit => (
+                                            <HabitCard key={habit.id} habit={habit} isGood={true} />
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h2 className="text-xl font-bold text-red-700 mb-3 flex items-center gap-2">
+                                        <span>📉</span>
+                                        Izvairīties
+                                    </h2>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {badHabits.map(habit => (
+                                            <HabitCard key={habit.id} habit={habit} isGood={false} />
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <WeekView />
+                        )}
+
+                        <div className="mt-6 text-center text-xs text-gray-500">
+                            Dati tiek saglabāti tikai tavā ierīcē
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<TempleTracker />, document.getElementById('root'));
+    </script>
+
+    <script>
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration);
+                    })
+                    .catch(err => {
+                        console.log('SW registration failed:', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
