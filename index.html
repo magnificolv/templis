@@ -106,12 +106,12 @@
                 }
             };
 
-            const loadTodayData = async () => {
+            const loadTodayData = () => {
                 setLoading(true);
                 try {
-                    const result = await window.storage.get(`tracking:${selectedDate}`);
-                    if (result && result.value) {
-                        setTodayData(JSON.parse(result.value));
+                    const data = localStorage.getItem(`tracking:${selectedDate}`);
+                    if (data) {
+                        setTodayData(JSON.parse(data));
                     } else {
                         setTodayData({});
                     }
@@ -122,39 +122,45 @@
                 setLoading(false);
             };
 
-            const loadWeekData = async () => {
+            const loadWeekData = () => {
                 try {
-                    const result = await window.storage.list('tracking:');
-                    if (result && result.keys) {
-                        const dates = result.keys.map(key => key.replace('tracking:', ''));
-                        
-                        const currentMonth = selectedDate.slice(0, 7);
-                        const currentMonthDates = dates.filter(date => date.startsWith(currentMonth));
-                        
-                        const monthPromises = currentMonthDates.map(async (date) => {
-                            try {
-                                const data = await window.storage.get(`tracking:${date}`);
-                                return { date, data: data ? JSON.parse(data.value) : {} };
-                            } catch {
-                                return { date, data: {} };
+                    const currentMonth = selectedDate.slice(0, 7);
+                    const monthData = [];
+                    
+                    // Get all keys from localStorage
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith('tracking:')) {
+                            const date = key.replace('tracking:', '');
+                            if (date.startsWith(currentMonth)) {
+                                try {
+                                    const data = localStorage.getItem(key);
+                                    monthData.push({ 
+                                        date, 
+                                        data: data ? JSON.parse(data) : {} 
+                                    });
+                                } catch {
+                                    monthData.push({ date, data: {} });
+                                }
                             }
-                        });
-                        
-                        const monthData = await Promise.all(monthPromises);
-                        setWeekData(monthData);
+                        }
                     }
+                    
+                    setWeekData(monthData);
                 } catch (error) {
                     console.log('Error loading month data');
                     setWeekData([]);
                 }
             };
 
-            const updateHabit = async (habitId, value) => {
+            const updateHabit = (habitId, value) => {
                 const newData = { ...todayData, [habitId]: value };
                 setTodayData(newData);
                 
                 try {
-                    await window.storage.set(`tracking:${selectedDate}`, JSON.stringify(newData));
+                    localStorage.setItem(`tracking:${selectedDate}`, JSON.stringify(newData));
+                    // Reload week data to update statistics
+                    loadWeekData();
                 } catch (error) {
                     console.error('Error saving data:', error);
                 }
