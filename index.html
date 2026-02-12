@@ -96,6 +96,13 @@
                 loadWeekData();
             }, [selectedDate]);
 
+            useEffect(() => {
+                // Reload week data when switching to stats view
+                if (view === 'stats') {
+                    loadWeekData();
+                }
+            }, [view]);
+
             const handleInstall = async () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
@@ -159,8 +166,6 @@
                 
                 try {
                     localStorage.setItem(`tracking:${selectedDate}`, JSON.stringify(newData));
-                    // Reload week data to update statistics
-                    loadWeekData();
                 } catch (error) {
                     console.error('Error saving data:', error);
                 }
