@@ -1,4 +1,4 @@
-# Manis Templis - PWA Instalācijas Instrukcijas
+# Mans Templis - PWA Instalācijas Instrukcijas
 
 ## 🔄 KĀ ATJAUNOT IKONAS UN APLIKĀCIJU
 
