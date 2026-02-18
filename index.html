@@ -65,22 +65,29 @@
             const [showInstall, setShowInstall] = useState(false);
             const [deferredPrompt, setDeferredPrompt] = useState(null);
             const [selectedHabit, setSelectedHabit] = useState(null);
+            const [customHabits, setCustomHabits] = useState({ good: [], bad: [] });
+            const [editMode, setEditMode] = useState(false);
+            const [showAddModal, setShowAddModal] = useState(false);
+            const [addHabitCategory, setAddHabitCategory] = useState('good');
+            const [editingHabit, setEditingHabit] = useState(null);
 
             const goodHabits = [
-                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘' },
-                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚' },
-                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪' },
-                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️' },
-                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑' },
-                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩' },
-                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗' },
-                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊' }
+                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘', isDefault: true },
+                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚', isDefault: true },
+                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪', isDefault: true },
+                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️', isDefault: true },
+                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑', isDefault: true },
+                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩', isDefault: true },
+                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗', isDefault: true },
+                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊', isDefault: true },
+                ...customHabits.good
             ];
 
             const badHabits = [
-                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺' },
-                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬' },
-                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔' }
+                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺', isDefault: true },
+                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬', isDefault: true },
+                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔', isDefault: true },
+                ...customHabits.bad
             ];
 
             useEffect(() => {
@@ -97,9 +104,30 @@
                     setShowInstall(false);
                 });
 
+                loadCustomHabits();
                 loadTodayData();
                 loadWeekData();
             }, [selectedDate]);
+
+            const loadCustomHabits = () => {
+                try {
+                    const saved = localStorage.getItem('customHabits');
+                    if (saved) {
+                        setCustomHabits(JSON.parse(saved));
+                    }
+                } catch (error) {
+                    console.log('Error loading custom habits');
+                }
+            };
+
+            const saveCustomHabits = (habits) => {
+                try {
+                    localStorage.setItem('customHabits', JSON.stringify(habits));
+                    setCustomHabits(habits);
+                } catch (error) {
+                    console.error('Error saving custom habits:', error);
+                }
+            };
 
             useEffect(() => {
                 // Reload week data when switching to stats view
@@ -107,6 +135,7 @@
                     loadWeekData();
                     setSelectedHabit(null); // Reset detailed view when switching to stats
                 }
+                setEditMode(false); // Turn off edit mode when switching views
             }, [view]);
 
             useEffect(() => {
@@ -196,6 +225,146 @@
                 return streak;
             };
 
+            const deleteHabit = (habitId, category) => {
+                const newCustomHabits = {
+                    ...customHabits,
+                    [category]: customHabits[category].filter(h => h.id !== habitId)
+                };
+                saveCustomHabits(newCustomHabits);
+            };
+
+            const addOrUpdateHabit = (habit, category) => {
+                let newCustomHabits = { ...customHabits };
+                
+                if (editingHabit) {
+                    // Update existing habit
+                    const oldCategory = editingHabit.category;
+                    if (oldCategory === category) {
+                        // Same category, just update
+                        newCustomHabits[category] = customHabits[category].map(h => 
+                            h.id === editingHabit.id ? habit : h
+                        );
+                    } else {
+                        // Category changed, remove from old and add to new
+                        newCustomHabits[oldCategory] = customHabits[oldCategory].filter(h => h.id !== editingHabit.id);
+                        newCustomHabits[category] = [...customHabits[category], habit];
+                    }
+                } else {
+                    // Add new habit
+                    newCustomHabits[category] = [...customHabits[category], habit];
+                }
+                
+                saveCustomHabits(newCustomHabits);
+                setShowAddModal(false);
+                setEditingHabit(null);
+            };
+
+            const AddHabitModal = () => {
+                const [name, setName] = useState(editingHabit?.name || '');
+                const [icon, setIcon] = useState(editingHabit?.icon || '');
+                const [unit, setUnit] = useState(editingHabit?.unit || '');
+                const [category, setCategory] = useState(editingHabit?.category || addHabitCategory);
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    if (!name.trim()) return;
+
+                    const habit = {
+                        id: editingHabit?.id || `custom_${Date.now()}`,
+                        name: name.trim(),
+                        icon: icon.trim() || '⭐',
+                        unit: unit.trim(),
+                        isDefault: false
+                    };
+
+                    addOrUpdateHabit(habit, category);
+                };
+
+                if (!showAddModal) return null;
+
+                return (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                            <h2 className="text-2xl font-bold mb-4">
+                                {editingHabit ? 'Rediģēt ieradumu' : 'Pievienot jaunu ieradumu'}
+                            </h2>
+                            
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Nosaukums *</label>
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="piemēram: Skriešana"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Emoji ikona</label>
+                                    <input
+                                        type="text"
+                                        value={icon}
+                                        onChange={(e) => setIcon(e.target.value)}
+                                        placeholder="🏃"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Tips</label>
+                                    <select
+                                        value={unit}
+                                        onChange={(e) => setUnit(e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="">Checkmark (✓)</option>
+                                        <option value="min">Minūtes</option>
+                                        <option value="gab.">Gabali</option>
+                                        <option value="reizes">Reizes</option>
+                                        <option value="ml">Millilitri</option>
+                                        <option value="g">Grami</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Kategorija</label>
+                                    <select
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="good">Pozitīvs (veselīgs)</option>
+                                        <option value="bad">Negatīvs (izvairīties)</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex gap-2 pt-2">
+                                    <button
+                                        type="submit"
+                                        className="flex-1 bg-blue-500 text-white py-2 rounded-lg font-semibold active:scale-95"
+                                    >
+                                        {editingHabit ? 'Saglabāt' : 'Pievienot'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowAddModal(false);
+                                            setEditingHabit(null);
+                                        }}
+                                        className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg font-semibold active:scale-95"
+                                    >
+                                        Atcelt
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
             const HabitCard = ({ habit, isGood }) => {
                 const savedValue = todayData?.[habit.id] || '';
                 const [localValue, setLocalValue] = useState(savedValue);
@@ -225,12 +394,39 @@
                                 <span className="text-2xl">{habit.icon}</span>
                                 <span className="font-semibold text-gray-800">{habit.name}</span>
                             </div>
-                            {streak > 0 && (
-                                <div className="flex items-center gap-1 text-orange-600 text-sm font-bold">
-                                    <span>🏆</span>
-                                    {streak}d
-                                </div>
-                            )}
+                            <div className="flex items-center gap-2">
+                                {streak > 0 && !editMode && (
+                                    <div className="flex items-center gap-1 text-orange-600 text-sm font-bold">
+                                        <span>🏆</span>
+                                        {streak}d
+                                    </div>
+                                )}
+                                {editMode && !habit.isDefault && (
+                                    <div className="flex gap-1">
+                                        <button
+                                            onClick={() => {
+                                                setEditingHabit({ ...habit, category: isGood ? 'good' : 'bad' });
+                                                setShowAddModal(true);
+                                            }}
+                                            className="p-1 bg-blue-500 text-white rounded active:scale-95"
+                                            title="Rediģēt"
+                                        >
+                                            ✏️
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                if (confirm(`Vai tiešām dzēst "${habit.name}"?`)) {
+                                                    deleteHabit(habit.id, isGood ? 'good' : 'bad');
+                                                }
+                                            }}
+                                            className="p-1 bg-red-500 text-white rounded active:scale-95"
+                                            title="Dzēst"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         
                         <div className="flex gap-2">
@@ -243,14 +439,16 @@
                                         onChange={(e) => setLocalValue(e.target.value)}
                                         onBlur={handleBlur}
                                         placeholder="0"
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                                        disabled={editMode}
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg disabled:bg-gray-100"
                                     />
                                     <span className="px-3 py-2 text-gray-600 font-medium">{habit.unit}</span>
                                 </>
                             ) : (
                                 <button
                                     onClick={handleCheckboxToggle}
-                                    className={`flex-1 py-3 rounded-lg font-semibold transition-all active:scale-95 ${
+                                    disabled={editMode}
+                                    className={`flex-1 py-3 rounded-lg font-semibold transition-all active:scale-95 disabled:opacity-50 ${
                                         savedValue 
                                             ? 'bg-green-500 text-white' 
                                             : 'bg-gray-200 text-gray-600'
@@ -457,6 +655,8 @@
 
             return (
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-8 px-4 pt-4">
+                    <AddHabitModal />
+                    
                     {showInstall && (
                         <div className="install-prompt bg-blue-500 text-white p-4 rounded-lg shadow-lg">
                             <div className="flex items-center justify-between gap-3">
@@ -486,6 +686,18 @@
                         <div className="text-center mb-6">
                             <h1 className="text-3xl font-bold text-gray-800 mb-2">🏛️ Mans Templis</h1>
                             <p className="text-gray-600 text-sm">Katru dienu tuvāk labākai versijai</p>
+                            {view === 'today' && (
+                                <button
+                                    onClick={() => setEditMode(!editMode)}
+                                    className={`mt-3 px-4 py-2 rounded-lg font-semibold text-sm active:scale-95 ${
+                                        editMode 
+                                            ? 'bg-blue-500 text-white' 
+                                            : 'bg-gray-200 text-gray-700'
+                                    }`}
+                                >
+                                    {editMode ? '✓ Gatavs' : '⚙️ Rediģēt ieradumus'}
+                                </button>
+                            )}
                         </div>
 
                         <div className="flex gap-2 mb-4 bg-white rounded-lg p-2 shadow-sm">
@@ -527,10 +739,24 @@
                         {view === 'today' ? (
                             <>
                                 <div className="mb-6">
-                                    <h2 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
-                                        <span>📈</span>
-                                        Veselīgas lietas
-                                    </h2>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
+                                            <span>📈</span>
+                                            Veselīgas lietas
+                                        </h2>
+                                        {editMode && (
+                                            <button
+                                                onClick={() => {
+                                                    setEditingHabit(null);
+                                                    setAddHabitCategory('good');
+                                                    setShowAddModal(true);
+                                                }}
+                                                className="bg-green-500 text-white px-3 py-1 rounded-lg font-semibold text-sm active:scale-95"
+                                            >
+                                                + Pievienot
+                                            </button>
+                                        )}
+                                    </div>
                                     <div className="grid grid-cols-1 gap-3">
                                         {goodHabits.map(habit => (
                                             <HabitCard key={habit.id} habit={habit} isGood={true} />
@@ -539,10 +765,24 @@
                                 </div>
 
                                 <div>
-                                    <h2 className="text-xl font-bold text-red-700 mb-3 flex items-center gap-2">
-                                        <span>📉</span>
-                                        Izvairīties
-                                    </h2>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h2 className="text-xl font-bold text-red-700 flex items-center gap-2">
+                                            <span>📉</span>
+                                            Izvairīties
+                                        </h2>
+                                        {editMode && (
+                                            <button
+                                                onClick={() => {
+                                                    setEditingHabit(null);
+                                                    setAddHabitCategory('bad');
+                                                    setShowAddModal(true);
+                                                }}
+                                                className="bg-red-500 text-white px-3 py-1 rounded-lg font-semibold text-sm active:scale-95"
+                                            >
+                                                + Pievienot
+                                            </button>
+                                        )}
+                                    </div>
                                     <div className="grid grid-cols-1 gap-3">
                                         {badHabits.map(habit => (
                                             <HabitCard key={habit.id} habit={habit} isGood={false} />
