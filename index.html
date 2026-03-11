@@ -71,24 +71,25 @@
             const [addHabitCategory, setAddHabitCategory] = useState('good');
             const [editingHabit, setEditingHabit] = useState(null);
 
-            const goodHabits = [
-                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘', isDefault: true },
-                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚', isDefault: true },
-                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪', isDefault: true },
-                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️', isDefault: true },
-                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑', isDefault: true },
-                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩', isDefault: true },
-                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗', isDefault: true },
-                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊', isDefault: true },
-                ...customHabits.good
+            const defaultGoodHabits = [
+                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘' },
+                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚' },
+                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪' },
+                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️' },
+                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑' },
+                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩' },
+                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗' },
+                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊' }
             ];
 
-            const badHabits = [
-                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺', isDefault: true },
-                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬', isDefault: true },
-                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔', isDefault: true },
-                ...customHabits.bad
+            const defaultBadHabits = [
+                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺' },
+                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬' },
+                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔' }
             ];
+
+            const goodHabits = customHabits.good || [];
+            const badHabits = customHabits.bad || [];
 
             useEffect(() => {
                 // PWA install prompt
@@ -114,6 +115,14 @@
                     const saved = localStorage.getItem('customHabits');
                     if (saved) {
                         setCustomHabits(JSON.parse(saved));
+                    } else {
+                        // First time - initialize with default habits
+                        const initialHabits = {
+                            good: defaultGoodHabits,
+                            bad: defaultBadHabits
+                        };
+                        localStorage.setItem('customHabits', JSON.stringify(initialHabits));
+                        setCustomHabits(initialHabits);
                     }
                 } catch (error) {
                     console.log('Error loading custom habits');
@@ -401,7 +410,7 @@
                                         {streak}d
                                     </div>
                                 )}
-                                {editMode && !habit.isDefault && (
+                                {editMode && (
                                     <div className="flex gap-1">
                                         <button
                                             onClick={() => {
@@ -687,16 +696,34 @@
                             <h1 className="text-3xl font-bold text-gray-800 mb-2">🏛️ Mans Templis</h1>
                             <p className="text-gray-600 text-sm">Katru dienu tuvāk labākai versijai</p>
                             {view === 'today' && (
-                                <button
-                                    onClick={() => setEditMode(!editMode)}
-                                    className={`mt-3 px-4 py-2 rounded-lg font-semibold text-sm active:scale-95 ${
-                                        editMode 
-                                            ? 'bg-blue-500 text-white' 
-                                            : 'bg-gray-200 text-gray-700'
-                                    }`}
-                                >
-                                    {editMode ? '✓ Gatavs' : '⚙️ Rediģēt ieradumus'}
-                                </button>
+                                <div className="mt-3 flex gap-2 justify-center">
+                                    <button
+                                        onClick={() => setEditMode(!editMode)}
+                                        className={`px-4 py-2 rounded-lg font-semibold text-sm active:scale-95 ${
+                                            editMode 
+                                                ? 'bg-blue-500 text-white' 
+                                                : 'bg-gray-200 text-gray-700'
+                                        }`}
+                                    >
+                                        {editMode ? '✓ Gatavs' : '⚙️ Rediģēt ieradumus'}
+                                    </button>
+                                    {editMode && (
+                                        <button
+                                            onClick={() => {
+                                                if (confirm('Vai tiešām atjaunot visus ieradumus uz noklusējuma vērtībām? Visi pievienotie un izmainītie ieradumi tiks dzēsti!')) {
+                                                    const initialHabits = {
+                                                        good: defaultGoodHabits,
+                                                        bad: defaultBadHabits
+                                                    };
+                                                    saveCustomHabits(initialHabits);
+                                                }
+                                            }}
+                                            className="px-4 py-2 rounded-lg font-semibold text-sm bg-orange-500 text-white active:scale-95"
+                                        >
+                                            🔄 Atjaunot noklusējumus
+                                        </button>
+                                    )}
+                                </div>
                             )}
                         </div>
 
