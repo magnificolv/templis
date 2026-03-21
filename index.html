@@ -43,9 +43,6 @@ input[type="number"]{-moz-appearance:textfield}
 .hdr-acts{display:flex;gap:8px}
 .hdr-btn{width:36px;height:36px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
 .hdr-btn:hover,.hdr-btn:active{background:var(--card-h);color:var(--t1)}
-.ver-badge{padding:4px 8px;border-radius:var(--r-f);background:var(--card);border:1px solid var(--brd);font-size:10px;font-weight:600;color:var(--t3);cursor:pointer;transition:.2s;white-space:nowrap}
-.ver-badge:active{background:var(--acc-g);color:var(--acc-l);border-color:var(--acc)}
-
 /* ── MAIN ── */
 .main{max-width:600px;margin:0 auto;padding:16px}
 @media(min-width:768px){.main{padding:24px;max-width:720px}}
@@ -53,11 +50,24 @@ input[type="number"]{-moz-appearance:textfield}
 /* ── PAGES ── */
 .pg{display:none}.pg.act{display:block}
 
-/* ── DATE PICKER ── */
-.date-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
-.date-arr{width:36px;height:36px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
-.date-arr:hover{background:var(--card-h);color:var(--t1)}
-.date-str{font-size:15px;font-weight:600;color:var(--t1);cursor:pointer;padding:6px 14px;border-radius:var(--r-f);background:var(--card);border:1px solid var(--brd)}
+/* ── WEEK STRIP ── */
+.week-strip-wrap{display:flex;align-items:center;gap:4px;margin-bottom:16px}
+.ws-arrow{width:32px;height:56px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:.2s;flex-shrink:0}
+.ws-arrow:hover,.ws-arrow:active{background:var(--card-h);color:var(--t1)}
+.week-strip{display:flex;gap:4px;flex:1;overflow:hidden}
+.ws-day{flex:1;min-width:0;padding:8px 2px;border-radius:var(--r-s);background:var(--card);border:1px solid var(--brd);text-align:center;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.ws-day:active{transform:scale(.96)}
+.ws-day.sel{border-color:var(--acc);background:var(--acc-g)}
+.ws-day.today-ring{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.ws-day.has-data .ws-dot{background:var(--ok)}
+.ws-day.sel .ws-name{color:var(--acc-l)}
+.ws-name{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.3px}
+.ws-num{font-size:17px;font-weight:700;color:var(--t1);margin:2px 0 3px}
+.ws-day.sel .ws-num{color:var(--acc-l)}
+.ws-dot{width:5px;height:5px;border-radius:50%;margin:0 auto;background:transparent;transition:.2s}
+.ws-month-label{text-align:center;margin-bottom:6px;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;padding:4px 12px;display:inline-block;border-radius:var(--r-f);transition:.2s}
+.ws-month-label:active{background:var(--acc-g);color:var(--acc-l)}
+.ws-month-row{text-align:center;margin-bottom:4px}
 
 /* ── SCORE RING ── */
 .score-banner{background:linear-gradient(135deg,var(--card) 0%,rgba(124,92,252,.08) 100%);border:1px solid var(--brd);border-radius:var(--r-l);padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
@@ -260,8 +270,10 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
   .hab-num{width:62px;padding:10px 6px;font-size:16px}
   .hab-check{width:34px;height:34px}
   .hab-streak{font-size:11px}
-  .date-arr{width:40px;height:40px;font-size:18px}
-  .date-str{font-size:14px;padding:8px 16px}
+  .ws-arrow{width:28px;font-size:16px}
+  .ws-num{font-size:15px}
+  .ws-name{font-size:9px}
+  .week-strip{gap:3px}
   .add-btn{padding:16px;font-size:15px}
   .bnav{height:calc(60px + var(--safe-b))}
   .nav-ic{font-size:24px}
@@ -281,7 +293,6 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 @media(min-width:481px) and (max-width:767px){
   .hab-check{width:36px;height:36px}
   .hab-num{padding:10px 8px;font-size:16px}
-  .date-arr{width:40px;height:40px}
 }
 
 /* ── CONFIRM ── */
@@ -314,7 +325,6 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
   </div>
   <div class="hdr-date" id="hdrDate"></div>
   <div class="hdr-acts">
-    <div class="ver-badge" id="verBadge" onclick="showVersionInfo()" title="Version info"></div>
     <button class="hdr-btn" id="editModeBtn" onclick="toggleEditMode()" title="Rediģēt">✏️</button>
   </div>
 </header>
@@ -334,11 +344,13 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 
   <!-- ═══ TODAY ═══ -->
   <div class="pg act" id="pg-today">
-    <div class="date-row">
-      <button class="date-arr" onclick="shiftDate(-1)">‹</button>
-      <div class="date-str" id="dateStr" onclick="goToday()"></div>
-      <button class="date-arr" onclick="shiftDate(1)">›</button>
+    <!-- Week strip date picker -->
+    <div class="week-strip-wrap">
+      <button class="ws-arrow" onclick="shiftWeek(-1)">‹</button>
+      <div class="week-strip" id="weekStrip"></div>
+      <button class="ws-arrow" onclick="shiftWeek(1)">›</button>
     </div>
+    <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="pickDate(this.value)">
     <div class="score-banner">
       <div class="score-info">
         <h2>Dienas progress</h2>
@@ -465,8 +477,8 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 /* ════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════ */
-const APP_VERSION = '2.0.2';
-const APP_BUILD = '20260321';
+const APP_VERSION = '2.1.0';
+const APP_BUILD = '20260321b';
 const HABITS_KEY = 'customHabits';
 const ICONS = ['🧘','📚','💪','❤️','💑','🥩','🥗','💊','🏃','💧','🎯','🌅','🧠','✍️','🎵','🧹','🚶','🏋️','🧑‍💻','📵','🍎','🙏','🎨','🗣️','🍺','🚬','🍔','⭐','🛌','🧪','💰','🏠'];
 
@@ -542,17 +554,81 @@ function go(pg){
 }
 
 /* ════════════════════════════════════════════════
-   DATE
+   DATE & WEEK STRIP
    ════════════════════════════════════════════════ */
-function shiftDate(dir){
-  const d=new Date(selectedDate+'T12:00:00');
-  d.setDate(d.getDate()+dir);
-  // Don't go into future
-  if(ds(d)>todayStr())return;
-  selectedDate=ds(d);
+let weekOffset=0; // 0 = current week, -1 = last week, etc.
+
+function getWeekDays(offset){
+  const now=new Date();
+  // Find Monday of current week
+  const dow=now.getDay();
+  const mon=new Date(now);
+  mon.setDate(now.getDate()-((dow+6)%7)+(offset*7));
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(mon);
+    d.setDate(mon.getDate()+i);
+    days.push(d);
+  }
+  return days;
+}
+
+function renderWeekStrip(){
+  const c=document.getElementById('weekStrip');if(!c)return;
+  const days=getWeekDays(weekOffset);
+  const dayNames=['P','O','T','C','Pk','S','Sv'];
+  const today=todayStr();
+
+  c.innerHTML='';
+  days.forEach((d,i)=>{
+    const dds=ds(d);
+    const isSel=dds===selectedDate;
+    const isToday=dds===today;
+    const isFuture=dds>today;
+    const log=getLog(dds);
+    const all=allHabits();
+    const hasAny=all.some(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';});
+
+    const el=document.createElement('div');
+    el.className='ws-day'+(isSel?' sel':'')+(isToday&&!isSel?' today-ring':'')+(hasAny?' has-data':'');
+    if(isFuture)el.style.opacity='.35';
+    el.innerHTML=`<div class="ws-name">${dayNames[i]}</div><div class="ws-num">${d.getDate()}</div><div class="ws-dot"></div>`;
+    if(!isFuture) el.onclick=()=>{selectedDate=dds;renderToday();};
+    c.appendChild(el);
+  });
+}
+
+function shiftWeek(dir){
+  const newOffset=weekOffset+dir;
+  // Don't go more than 1 week into future
+  const days=getWeekDays(newOffset);
+  const today=todayStr();
+  if(dir>0 && ds(days[0])>today)return;
+  weekOffset=newOffset;
+  renderWeekStrip();
+}
+
+function pickDate(val){
+  if(!val)return;
+  if(val>todayStr())return;
+  selectedDate=val;
+  // Calculate weekOffset to show this date's week
+  const picked=new Date(val+'T12:00:00');
+  const now=new Date();
+  const nowMon=new Date(now);nowMon.setDate(now.getDate()-((now.getDay()+6)%7));
+  const pickMon=new Date(picked);pickMon.setDate(picked.getDate()-((picked.getDay()+6)%7));
+  weekOffset=Math.round((pickMon-nowMon)/(7*86400000));
   renderToday();
 }
-function goToday(){ selectedDate=todayStr(); renderToday(); }
+
+function openDatePicker(){
+  const dp=document.getElementById('datePicker');
+  dp.value=selectedDate;
+  dp.max=todayStr();
+  dp.showPicker?dp.showPicker():dp.click();
+}
+
+function goToday(){ selectedDate=todayStr(); weekOffset=0; renderToday(); }
 
 /* ════════════════════════════════════════════════
    RENDER: TODAY
@@ -561,9 +637,14 @@ function renderToday(){
   const d=new Date(selectedDate+'T12:00:00');
   const isToday=selectedDate===todayStr();
 
-  // Header date
-  document.getElementById('hdrDate').textContent=d.toLocaleDateString('lv-LV',{weekday:'short',day:'numeric',month:'long'});
-  document.getElementById('dateStr').textContent=isToday?'Šodien':d.toLocaleDateString('lv-LV',{day:'numeric',month:'short',year:'numeric'});
+  // Header date — tap to open native date picker
+  const hdrDate=document.getElementById('hdrDate');
+  hdrDate.textContent=isToday?'Šodien':d.toLocaleDateString('lv-LV',{weekday:'short',day:'numeric',month:'long'});
+  hdrDate.style.cursor='pointer';
+  hdrDate.onclick=openDatePicker;
+
+  // Week strip
+  renderWeekStrip();
 
   const log=getLog(selectedDate);
   const all=allHabits();
@@ -1294,20 +1375,8 @@ if('serviceWorker' in navigator){
    VERSION & UPDATE
    ════════════════════════════════════════════════ */
 function updateVersionDisplay(){
-  const badge=document.getElementById('verBadge');
-  if(badge) badge.textContent='v'+APP_VERSION;
   const sv=document.getElementById('settingsVer');
   if(sv) sv.textContent='Templis v'+APP_VERSION+' · Build '+APP_BUILD;
-}
-
-function showVersionInfo(){
-  const swStatus=navigator.serviceWorker&&navigator.serviceWorker.controller?'aktīvs':'nav';
-  showConfirm(
-    'Versijas info',
-    `Versija: ${APP_VERSION}\nBuild: ${APP_BUILD}\nService Worker: ${swStatus}\n\nJa redzi veco versiju, spied "Atjaunot" lai piespiestu update.`,
-    ()=>forceUpdate()
-  );
-  document.getElementById('cAction').textContent='Atjaunot';
 }
 
 function forceUpdate(){
