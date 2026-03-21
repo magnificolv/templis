@@ -1,1123 +1,1241 @@
 <!DOCTYPE html>
 <html lang="lv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#3B82F6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Mans Templis">
-    <meta name="description" content="Ikdienas veselības ieradumu trackings">
-    
-    <!-- Splash screen images for iOS -->
-    <link rel="apple-touch-startup-image" href="icon-512.png">
-    
-    <title>Mans Templis</title>
-    <link rel="manifest" href="manifest.json?v=1.1">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.1">
-    <link rel="apple-touch-icon" href="icon-512.png?v=1.1">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            overscroll-behavior-y: contain;
-        }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        .install-prompt {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            z-index: 1000;
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mans Templis">
+<meta name="description" content="Ikdienas veselības ieradumu trackings">
+<link rel="apple-touch-startup-image" href="icon-512.png">
+<title>Mans Templis</title>
+<link rel="manifest" href="manifest.json?v=2.0">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.0">
+<link rel="apple-touch-icon" href="icon-512.png?v=2.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--card:#16161f;--card-h:#1c1c28;--elev:#1e1e2a;
+  --input:#1a1a26;--brd:#2a2a3a;--brd2:#353548;
+  --t1:#e8e8f0;--t2:#9898b0;--t3:#6a6a82;
+  --acc:#7c5cfc;--acc-l:#9b80ff;--acc-d:#5a3cd4;--acc-g:rgba(124,92,252,.15);
+  --ok:#34d399;--ok-d:#059669;--ok-g:rgba(52,211,153,.12);
+  --warn:#fbbf24;--bad:#f87171;--bad-g:rgba(248,113,113,.12);
+  --gold:#f59e0b;--gold-g:rgba(245,158,11,.15);
+  --r-s:8px;--r-m:12px;--r-l:16px;--r-xl:20px;--r-f:999px;
+  --nav-h:64px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+html{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{min-height:100dvh;background:var(--bg);padding-bottom:calc(var(--nav-h) + var(--safe-b) + 16px);overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type="number"]{-moz-appearance:textfield}
+
+/* ── HEADER ── */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-i{width:32px;height:32px;background:linear-gradient(135deg,var(--acc),var(--acc-l));border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;letter-spacing:-1px}
+.logo-t{font-size:18px;font-weight:700;letter-spacing:-.5px}
+.hdr-date{font-size:13px;color:var(--t2);font-weight:500}
+.hdr-acts{display:flex;gap:8px}
+.hdr-btn{width:36px;height:36px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
+.hdr-btn:hover,.hdr-btn:active{background:var(--card-h);color:var(--t1)}
+
+/* ── MAIN ── */
+.main{max-width:600px;margin:0 auto;padding:16px}
+@media(min-width:768px){.main{padding:24px;max-width:720px}}
+
+/* ── PAGES ── */
+.pg{display:none}.pg.act{display:block}
+
+/* ── DATE PICKER ── */
+.date-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.date-arr{width:36px;height:36px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
+.date-arr:hover{background:var(--card-h);color:var(--t1)}
+.date-str{font-size:15px;font-weight:600;color:var(--t1);cursor:pointer;padding:6px 14px;border-radius:var(--r-f);background:var(--card);border:1px solid var(--brd)}
+
+/* ── SCORE RING ── */
+.score-banner{background:linear-gradient(135deg,var(--card) 0%,rgba(124,92,252,.08) 100%);border:1px solid var(--brd);border-radius:var(--r-l);padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.score-info h2{font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.score-num{font-size:42px;font-weight:900;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,var(--acc-l),var(--ok));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-sub{font-size:13px;color:var(--t3);margin-top:2px}
+.ring{width:72px;height:72px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--brd);stroke-width:4}
+.ring-fg{fill:none;stroke:url(#rGrad);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.ring-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--t1)}
+
+/* ── SECTION ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-t{font-size:16px;font-weight:700}
+.sec-badge{font-size:12px;color:var(--t3);background:var(--elev);padding:3px 10px;border-radius:var(--r-f);font-weight:600}
+
+/* ── HABIT CARDS ── */
+.hab-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.hab-group-t{font-size:12px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-left:4px}
+.hab-group-t.bad{color:var(--bad)}
+
+.hab{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);transition:.2s;cursor:default;position:relative}
+.hab.done{border-color:var(--ok-d);background:var(--ok-g)}
+.hab.done-bad{border-color:rgba(248,113,113,.3);background:var(--bad-g)}
+
+.hab-icon{font-size:22px;flex-shrink:0}
+.hab-info{flex:1;min-width:0}
+.hab-name{font-size:14px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hab-unit{font-size:11px;color:var(--t3)}
+.hab-streak{font-size:12px;font-weight:700;color:var(--acc-l);display:flex;align-items:center;gap:3px}
+
+.hab-input-area{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+.hab-check{width:28px;height:28px;border-radius:var(--r-s);border:2px solid var(--brd2);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:.2s;font-size:14px;color:transparent;background:transparent}
+.hab.done .hab-check,.hab.done-bad .hab-check{background:var(--ok);border-color:var(--ok);color:#fff}
+.hab.done-bad .hab-check{background:var(--bad);border-color:var(--bad)}
+
+.hab-num{width:60px;padding:6px 8px;border:1px solid var(--brd);border-radius:var(--r-s);background:var(--input);color:var(--t1);font-size:14px;font-family:inherit;text-align:center;transition:.2s}
+.hab-num:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
+.hab-num-unit{font-size:11px;color:var(--t3);font-weight:600;min-width:24px}
+
+/* ── EDIT BUTTONS ── */
+.hab-edit-btns{display:flex;gap:4px;position:absolute;right:8px;top:8px}
+.hab-edit-btn{width:24px;height:24px;border-radius:4px;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:.2s}
+.hab-edit-btn.ed{background:rgba(124,92,252,.15);color:var(--acc-l)}
+.hab-edit-btn.del{background:var(--bad-g);color:var(--bad)}
+
+/* ── ADD HABIT ── */
+.add-btn{width:100%;padding:14px;border:2px dashed var(--brd);border-radius:var(--r-m);background:transparent;color:var(--t3);font-size:14px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;margin-bottom:24px}
+.add-btn:hover,.add-btn:active{border-color:var(--acc);color:var(--acc-l);background:var(--acc-g)}
+
+/* ── QUICK STATS ── */
+.qstats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+@media(min-width:480px){.qstats{grid-template-columns:repeat(4,1fr)}}
+.qstat{background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);padding:14px;text-align:center}
+.qstat-v{font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.qstat-l{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:4px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+@media(min-width:768px){.modal-bg.open{align-items:center}}
+.modal{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:24px 20px;width:100%;max-width:500px;max-height:85dvh;overflow-y:auto}
+@media(min-width:768px){.modal{border-radius:var(--r-xl)}}
+.modal-handle{width:36px;height:4px;background:var(--brd2);border-radius:2px;margin:0 auto 16px}
+@media(min-width:768px){.modal-handle{display:none}}
+.modal-t{font-size:18px;font-weight:700;margin-bottom:20px}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.fi{width:100%;padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r-s);background:var(--input);color:var(--t1);font-size:14px;font-family:inherit;transition:.2s}
+.fi:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
+.fi::placeholder{color:var(--t3)}
+select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239898b0' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.icon-pick{display:flex;gap:8px;flex-wrap:wrap}
+.icon-opt{width:40px;height:40px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.icon-opt:hover{background:var(--card-h)}.icon-opt.sel{border-color:var(--acc);background:var(--acc-g)}
+
+.cat-pick{display:flex;gap:8px}
+.cat-opt{padding:8px 16px;border-radius:var(--r-f);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--brd);background:var(--card);color:var(--t2);transition:.2s}
+.cat-opt:hover{background:var(--card-h)}
+.cat-opt.sel{border-color:var(--acc);background:var(--acc);color:#fff}
+.cat-opt.sel-good{border-color:var(--ok-d);background:var(--ok);color:#fff}
+.cat-opt.sel-bad{border-color:rgba(220,70,70,.6);background:var(--bad);color:#fff}
+
+.f-acts{display:flex;gap:10px;margin-top:20px}
+.btn{flex:1;padding:12px;border-radius:var(--r-s);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:.2s;border:none}
+.btn-pri{background:var(--acc);color:#fff}.btn-pri:hover{background:var(--acc-d)}
+.btn-sec{background:var(--card);color:var(--t2);border:1px solid var(--brd)}.btn-sec:hover{background:var(--card-h)}
+.btn-bad{background:var(--bad-g);color:var(--bad);border:1px solid rgba(248,113,113,.2)}.btn-bad:hover{background:rgba(248,113,113,.2)}
+
+/* ── STATS VIEW ── */
+.month-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.month-t{font-size:16px;font-weight:700;min-width:150px;text-align:center}
+
+.stat-section{background:var(--card);border:1px solid var(--brd);border-radius:var(--r-l);padding:20px;margin-bottom:16px}
+.stat-section-t{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.stat-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;padding:6px 8px;border-radius:var(--r-s);transition:.2s}
+.stat-row:hover{background:var(--elev)}
+.stat-row:last-child{margin-bottom:0}
+.stat-icon{font-size:18px;flex-shrink:0}
+.stat-name{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat-bar-w{width:80px;height:6px;background:var(--elev);border-radius:3px;overflow:hidden;flex-shrink:0}
+.stat-bar{height:100%;border-radius:3px;transition:width .4s ease}
+.stat-bar.good{background:linear-gradient(90deg,var(--acc),var(--ok))}
+.stat-bar.bad{background:linear-gradient(90deg,var(--warn),var(--bad))}
+.stat-val{font-size:13px;font-weight:700;min-width:36px;text-align:right}
+.stat-val.good{color:var(--ok)}.stat-val.bad{color:var(--bad)}
+
+/* Habit detail */
+.detail-back{display:flex;align-items:center;gap:6px;color:var(--acc-l);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;padding:6px 0}
+.detail-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.detail-icon{font-size:36px}
+.detail-name{font-size:20px;font-weight:800}
+.detail-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.detail-stat{background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);padding:12px;text-align:center}
+.detail-stat-v{font-size:20px;font-weight:800;color:var(--acc-l)}
+.detail-stat-l{font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;margin-top:2px}
+.detail-log{display:flex;flex-direction:column;gap:6px}
+.detail-entry{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-s)}
+.detail-entry-date{font-size:13px;color:var(--t2);font-weight:500}
+.detail-entry-val{font-size:14px;font-weight:700;color:var(--t1)}
+
+/* ── CHARTS / PREMIUM ── */
+.prem-gate{text-align:center;padding:40px 20px}
+.prem-icon{font-size:48px;margin-bottom:16px}
+.prem-title{font-size:22px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.prem-desc{font-size:14px;color:var(--t2);margin-bottom:24px;line-height:1.6;max-width:350px;margin-left:auto;margin-right:auto}
+.prem-feats{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto 28px;text-align:left}
+.prem-feat{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);font-size:13px;font-weight:500;color:var(--t2)}
+.prem-feat-i{font-size:18px}
+.btn-prem{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1a2e;border:none;border-radius:var(--r-f);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;box-shadow:0 4px 20px var(--gold-g)}
+.btn-prem:hover{transform:translateY(-1px)}
+
+.chart-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r-l);padding:20px;margin-bottom:16px;overflow:hidden}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-t{font-size:14px;font-weight:700}
+.chart-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--r-f);background:var(--acc-g);color:var(--acc-l)}
+.chart-area{width:100%;height:200px;position:relative}
+.chart-area canvas{width:100%!important;height:100%!important}
+
+.heatmap-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.heatmap-lbl{font-size:9px;font-weight:600;color:var(--t3);text-align:center;text-transform:uppercase}
+.heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.heatmap-c{aspect-ratio:1;border-radius:3px;background:var(--elev);transition:.2s}
+.heatmap-c.l1{background:rgba(124,92,252,.15)}.heatmap-c.l2{background:rgba(124,92,252,.3)}.heatmap-c.l3{background:rgba(124,92,252,.5)}.heatmap-c.l4{background:rgba(124,92,252,.75)}
+
+.corr-list{display:flex;flex-direction:column;gap:8px}
+.corr-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--elev);border-radius:var(--r-s)}
+.corr-pair{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.corr-bar-w{width:60px;height:6px;background:var(--card);border-radius:3px;overflow:hidden}
+.corr-bar{height:100%;border-radius:3px}
+.corr-val{font-size:13px;font-weight:700;min-width:40px;text-align:right}
+.corr-val.pos{color:var(--ok)}.corr-val.neg{color:var(--bad)}
+
+/* ── SETTINGS ── */
+.set-grp{margin-bottom:24px}
+.set-grp-t{font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.set-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);margin-bottom:6px;cursor:pointer;transition:.2s}
+.set-item:hover{background:var(--card-h)}
+.set-left{display:flex;align-items:center;gap:12px}
+.set-icon{font-size:20px}
+.set-label{font-size:14px;font-weight:600}
+.set-sub{font-size:12px;color:var(--t3)}
+.toggle{width:44px;height:24px;background:var(--brd);border-radius:12px;position:relative;cursor:pointer;transition:.2s;flex-shrink:0}
+.toggle.on{background:var(--acc)}
+.toggle::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s}
+.toggle.on::after{left:22px}
+.set-arr{color:var(--t3);font-size:14px}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);background:rgba(10,10,15,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:space-around;z-index:100}
+.nav-i{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;transition:.2s}
+.nav-ic{font-size:22px}.nav-lb{font-size:10px;font-weight:600;color:var(--t3);transition:.2s}
+.nav-i.act .nav-ic{filter:brightness(1.2)}.nav-i.act .nav-lb{color:var(--acc-l)}
+.nav-i.act::before{content:'';position:absolute;top:-1px;width:24px;height:2px;background:var(--acc);border-radius:0 0 2px 2px}
+.nav-prem{position:absolute;top:2px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
+/* ── TOAST ── */
+.toast-c{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:10px 18px;background:var(--elev);border:1px solid var(--brd);border-radius:var(--r-f);font-size:13px;font-weight:600;color:var(--t1);box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transform:translateY(-10px);animation:tIn .3s ease forwards;pointer-events:auto;white-space:nowrap}
+@keyframes tIn{to{opacity:1;transform:translateY(0)}}
+
+/* ── CONFIRM ── */
+.confirm-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:250;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-bg.open{display:flex}
+.confirm{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r-l);padding:24px;max-width:340px;width:100%;text-align:center}
+.confirm-t{font-size:16px;font-weight:700;margin-bottom:8px}
+.confirm-msg{font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.confirm-acts{display:flex;gap:10px}
+
+/* ── INSTALL PROMPT ── */
+.install-bar{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);left:16px;right:16px;z-index:150;background:linear-gradient(135deg,var(--acc),var(--acc-d));border-radius:var(--r-m);padding:14px 16px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(124,92,252,.3)}
+.install-bar.show{display:flex}
+.install-bar-txt{flex:1;font-size:13px;font-weight:600;color:#fff}
+.install-bar-btn{padding:8px 16px;border-radius:var(--r-s);background:#fff;color:var(--acc-d);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.install-bar-x{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+</style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+<svg style="position:absolute;width:0;height:0"><defs>
+  <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
+</defs></svg>
 
-        function TempleTracker() {
-            const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-            const [todayData, setTodayData] = useState(null);
-            const [view, setView] = useState('today');
-            const [weekData, setWeekData] = useState([]);
-            const [loading, setLoading] = useState(true);
-            const [showInstall, setShowInstall] = useState(false);
-            const [deferredPrompt, setDeferredPrompt] = useState(null);
-            const [selectedHabit, setSelectedHabit] = useState(null);
-            const [customHabits, setCustomHabits] = useState({ good: [], bad: [] });
-            const [editMode, setEditMode] = useState(false);
-            const [showAddModal, setShowAddModal] = useState(false);
-            const [addHabitCategory, setAddHabitCategory] = useState('good');
-            const [editingHabit, setEditingHabit] = useState(null);
-            const [chartView, setChartView] = useState('overview'); // 'overview' or 'habit'
-            const [selectedChartHabit, setSelectedChartHabit] = useState(null);
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-i">T</div>
+    <div class="logo-t">Mans Templis</div>
+  </div>
+  <div class="hdr-date" id="hdrDate"></div>
+  <div class="hdr-acts">
+    <button class="hdr-btn" id="editModeBtn" onclick="toggleEditMode()" title="Rediģēt">✏️</button>
+  </div>
+</header>
 
-            const defaultGoodHabits = [
-                { id: 'meditation', name: 'Meditācija', unit: 'min', icon: '🧘' },
-                { id: 'learning', name: 'Mācīšanās', unit: 'min', icon: '📚' },
-                { id: 'workout', name: 'Treniņš', unit: 'min', icon: '💪' },
-                { id: 'emotional', name: 'Emocionālā saite', unit: 'min', icon: '❤️' },
-                { id: 'intimacy', name: 'Fiziskā tuvība', unit: '', icon: '💑' },
-                { id: 'protein', name: 'Proteīns', unit: '', icon: '🥩' },
-                { id: 'healthy_food', name: 'Veselīgs uzturs', unit: '', icon: '🥗' },
-                { id: 'supplements', name: 'Vitamīni', unit: '', icon: '💊' }
-            ];
+<!-- TOASTS -->
+<div class="toast-c" id="toastC"></div>
 
-            const defaultBadHabits = [
-                { id: 'alcohol', name: 'Alkohols', unit: 'drinks', icon: '🍺' },
-                { id: 'cigarettes', name: 'Cigaretes', unit: 'gab.', icon: '🚬' },
-                { id: 'junk_food', name: 'Neveselīgi ēdieni', unit: '', icon: '🍔' }
-            ];
+<!-- INSTALL BAR -->
+<div class="install-bar" id="installBar">
+  <div class="install-bar-txt">Instalē Templis kā aplikāciju!</div>
+  <button class="install-bar-btn" onclick="doInstall()">Instalēt</button>
+  <button class="install-bar-x" onclick="hideInstall()">✕</button>
+</div>
 
-            const goodHabits = customHabits.good || [];
-            const badHabits = customHabits.bad || [];
+<!-- MAIN CONTENT -->
+<div class="main">
 
-            useEffect(() => {
-                // PWA install prompt
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    setDeferredPrompt(e);
-                    setShowInstall(true);
-                });
+  <!-- ═══ TODAY ═══ -->
+  <div class="pg act" id="pg-today">
+    <div class="date-row">
+      <button class="date-arr" onclick="shiftDate(-1)">‹</button>
+      <div class="date-str" id="dateStr" onclick="goToday()"></div>
+      <button class="date-arr" onclick="shiftDate(1)">›</button>
+    </div>
+    <div class="score-banner">
+      <div class="score-info">
+        <h2>Dienas progress</h2>
+        <div class="score-num" id="scoreNum">0%</div>
+        <div class="score-sub" id="scoreSub">0 no 0 izpildīti</div>
+      </div>
+      <div class="ring">
+        <svg viewBox="0 0 72 72"><circle class="ring-bg" cx="36" cy="36" r="30"/><circle class="ring-fg" cx="36" cy="36" r="30" stroke-dasharray="188.5" stroke-dashoffset="188.5" id="ringFg"/></svg>
+        <div class="ring-txt" id="ringTxt">0%</div>
+      </div>
+    </div>
+    <div class="qstats" id="qstats"></div>
+    <div id="habitsContainer"></div>
+    <button class="add-btn" onclick="openAddHabit()"><span>+</span> Pievienot ieradumu</button>
+  </div>
 
-                // Check if already installed
-                window.addEventListener('appinstalled', () => {
-                    console.log('PWA installed');
-                    setShowInstall(false);
-                });
+  <!-- ═══ STATS ═══ -->
+  <div class="pg" id="pg-stats">
+    <div id="statsContent"></div>
+  </div>
 
-                loadCustomHabits();
-                loadTodayData();
-                loadWeekData();
-            }, [selectedDate]);
+  <!-- ═══ CHARTS ═══ -->
+  <div class="pg" id="pg-charts">
+    <div id="chartsContent"></div>
+  </div>
 
-            const loadCustomHabits = () => {
-                try {
-                    const saved = localStorage.getItem('customHabits');
-                    if (saved) {
-                        setCustomHabits(JSON.parse(saved));
-                    } else {
-                        // First time - initialize with default habits
-                        const initialHabits = {
-                            good: defaultGoodHabits,
-                            bad: defaultBadHabits
-                        };
-                        localStorage.setItem('customHabits', JSON.stringify(initialHabits));
-                        setCustomHabits(initialHabits);
-                    }
-                } catch (error) {
-                    console.log('Error loading custom habits');
-                }
-            };
+  <!-- ═══ SETTINGS ═══ -->
+  <div class="pg" id="pg-settings">
+    <div class="sec-hdr" style="margin-bottom:20px"><div class="sec-t">Iestatījumi</div></div>
+    <div class="set-grp">
+      <div class="set-grp-t">Premium</div>
+      <div class="set-item" onclick="togglePremium()">
+        <div class="set-left"><span class="set-icon">👑</span><div><div class="set-label">Premium Grafiki</div><div class="set-sub" id="premStat">Bloķēts</div></div></div>
+        <div class="toggle" id="togPrem"></div>
+      </div>
+    </div>
+    <div class="set-grp">
+      <div class="set-grp-t">Dati</div>
+      <div class="set-item" onclick="exportData()">
+        <div class="set-left"><span class="set-icon">📤</span><div><div class="set-label">Eksportēt datus</div><div class="set-sub">JSON formātā</div></div></div>
+        <span class="set-arr">›</span>
+      </div>
+      <div class="set-item" onclick="importData()">
+        <div class="set-left"><span class="set-icon">📥</span><div><div class="set-label">Importēt datus</div><div class="set-sub">No JSON faila</div></div></div>
+        <span class="set-arr">›</span>
+      </div>
+      <div class="set-item" onclick="resetDefaults()">
+        <div class="set-left"><span class="set-icon">🔄</span><div><div class="set-label">Atjaunot noklusējumus</div><div class="set-sub">Atgriezt standarta ieradumus</div></div></div>
+        <span class="set-arr">›</span>
+      </div>
+      <div class="set-item" onclick="confirmReset()">
+        <div class="set-left"><span class="set-icon">🗑️</span><div><div class="set-label" style="color:var(--bad)">Dzēst visus datus</div><div class="set-sub">Nevar atjaunot</div></div></div>
+        <span class="set-arr">›</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;color:var(--t3);font-size:12px">Templis v2.0 · Opus Edition</div>
+  </div>
+</div>
 
-            const saveCustomHabits = (habits) => {
-                try {
-                    localStorage.setItem('customHabits', JSON.stringify(habits));
-                    setCustomHabits(habits);
-                } catch (error) {
-                    console.error('Error saving custom habits:', error);
-                }
-            };
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="nav-i act" onclick="go('today')" data-pg="today"><span class="nav-ic">📋</span><span class="nav-lb">Šodien</span></div>
+  <div class="nav-i" onclick="go('stats')" data-pg="stats"><span class="nav-ic">📊</span><span class="nav-lb">Statistika</span></div>
+  <div class="nav-i" onclick="go('charts')" data-pg="charts"><span class="nav-ic">📈</span><span class="nav-lb">Grafiki</span><span class="nav-prem" id="premBadge"></span></div>
+  <div class="nav-i" onclick="go('settings')" data-pg="settings"><span class="nav-ic">⚙️</span><span class="nav-lb">Iestatījumi</span></div>
+</nav>
 
-            useEffect(() => {
-                // Reload week data when switching to stats view
-                if (view === 'stats') {
-                    loadWeekData();
-                    setSelectedHabit(null); // Reset detailed view when switching to stats
-                }
-                setEditMode(false); // Turn off edit mode when switching views
-            }, [view]);
+<!-- ADD/EDIT MODAL -->
+<div class="modal-bg" id="habModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-t" id="modalT">Pievienot ieradumu</div>
+    <div class="fg"><label class="fl">Nosaukums *</label><input class="fi" id="mName" placeholder="piem. Skriešana" maxlength="40"></div>
+    <div class="fg"><label class="fl">Emoji ikona</label><div class="icon-pick" id="mIcons"></div></div>
+    <div class="fg"><label class="fl">Tips</label>
+      <select class="fi" id="mUnit">
+        <option value="">Checkmark (✓)</option>
+        <option value="min">Minūtes</option>
+        <option value="gab.">Gabali</option>
+        <option value="reizes">Reizes</option>
+        <option value="ml">Millilitri</option>
+        <option value="g">Grami</option>
+        <option value="drinks">Dzērieni</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Kategorija</label><div class="cat-pick" id="mCats"></div></div>
+    <div class="f-acts">
+      <button class="btn btn-sec" onclick="closeModal()">Atcelt</button>
+      <button class="btn btn-bad" id="mDelBtn" onclick="deleteHabit()" style="display:none">Dzēst</button>
+      <button class="btn btn-pri" onclick="saveHabit()">Saglabāt</button>
+    </div>
+  </div>
+</div>
 
-            useEffect(() => {
-                // Reset selected habit when date changes
-                setSelectedHabit(null);
-            }, [selectedDate]);
+<!-- CONFIRM -->
+<div class="confirm-bg" id="confirmBg">
+  <div class="confirm">
+    <div class="confirm-t" id="cTitle">Apstiprināt</div>
+    <div class="confirm-msg" id="cMsg"></div>
+    <div class="confirm-acts">
+      <button class="btn btn-sec" onclick="closeConfirm()">Atcelt</button>
+      <button class="btn btn-bad" id="cAction" onclick="doConfirm()">Dzēst</button>
+    </div>
+  </div>
+</div>
 
-            const handleInstall = async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response: ${outcome}`);
-                    setDeferredPrompt(null);
-                    setShowInstall(false);
-                }
-            };
+<!-- HIDDEN FILE INPUT FOR IMPORT -->
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleImport(event)">
 
-            const loadTodayData = () => {
-                setLoading(true);
-                try {
-                    const data = localStorage.getItem(`tracking:${selectedDate}`);
-                    if (data) {
-                        setTodayData(JSON.parse(data));
-                    } else {
-                        setTodayData({});
-                    }
-                } catch (error) {
-                    console.log('No data for this date');
-                    setTodayData({});
-                }
-                setLoading(false);
-            };
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-            const loadWeekData = () => {
-                try {
-                    const currentMonth = selectedDate.slice(0, 7);
-                    const monthData = [];
-                    
-                    // Get all keys from localStorage
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        if (key && key.startsWith('tracking:')) {
-                            const date = key.replace('tracking:', '');
-                            if (date.startsWith(currentMonth)) {
-                                try {
-                                    const data = localStorage.getItem(key);
-                                    monthData.push({ 
-                                        date, 
-                                        data: data ? JSON.parse(data) : {} 
-                                    });
-                                } catch {
-                                    monthData.push({ date, data: {} });
-                                }
-                            }
-                        }
-                    }
-                    
-                    setWeekData(monthData);
-                } catch (error) {
-                    console.log('Error loading month data');
-                    setWeekData([]);
-                }
-            };
+<script>
+/* ════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════ */
+const HABITS_KEY = 'customHabits';
+const ICONS = ['🧘','📚','💪','❤️','💑','🥩','🥗','💊','🏃','💧','🎯','🌅','🧠','✍️','🎵','🧹','🚶','🏋️','🧑‍💻','📵','🍎','🙏','🎨','🗣️','🍺','🚬','🍔','⭐','🛌','🧪','💰','🏠'];
 
-            const updateHabit = (habitId, value) => {
-                const newData = { ...todayData, [habitId]: value };
-                setTodayData(newData);
-                
-                try {
-                    localStorage.setItem(`tracking:${selectedDate}`, JSON.stringify(newData));
-                } catch (error) {
-                    console.error('Error saving data:', error);
-                }
-            };
+const DEFAULT_GOOD = [
+  {id:'meditation',name:'Meditācija',unit:'min',icon:'🧘'},
+  {id:'learning',name:'Mācīšanās',unit:'min',icon:'📚'},
+  {id:'workout',name:'Treniņš',unit:'min',icon:'💪'},
+  {id:'emotional',name:'Emocionālā saite',unit:'min',icon:'❤️'},
+  {id:'intimacy',name:'Fiziskā tuvība',unit:'',icon:'💑'},
+  {id:'protein',name:'Proteīns',unit:'',icon:'🥩'},
+  {id:'healthy_food',name:'Veselīgs uzturs',unit:'',icon:'🥗'},
+  {id:'supplements',name:'Vitamīni',unit:'',icon:'💊'}
+];
 
-            const calculateStreak = (habitId) => {
-                let streak = 0;
-                const sortedDays = [...weekData].sort((a, b) => b.date.localeCompare(a.date));
-                
-                for (let day of sortedDays) {
-                    if (day.data[habitId] && day.data[habitId] !== '0' && day.data[habitId] !== '') {
-                        streak++;
-                    } else {
-                        break;
-                    }
-                }
-                return streak;
-            };
+const DEFAULT_BAD = [
+  {id:'alcohol',name:'Alkohols',unit:'drinks',icon:'🍺'},
+  {id:'cigarettes',name:'Cigaretes',unit:'gab.',icon:'🚬'},
+  {id:'junk_food',name:'Neveselīgi ēdieni',unit:'',icon:'🍔'}
+];
 
-            const deleteHabit = (habitId, category) => {
-                const newCustomHabits = {
-                    ...customHabits,
-                    [category]: customHabits[category].filter(h => h.id !== habitId)
-                };
-                saveCustomHabits(newCustomHabits);
-            };
+let habits = {good:[], bad:[]};
+let selectedDate = new Date().toISOString().split('T')[0];
+let editMode = false;
+let editingId = null;
+let editingCat = null;
+let mIcon = '⭐';
+let mCat = 'good';
+let confirmCb = null;
+let premium = false;
+let deferredPrompt = null;
+let statsDetail = null; // {habit, cat} or null
 
-            const addOrUpdateHabit = (habit, category) => {
-                let newCustomHabits = { ...customHabits };
-                
-                if (editingHabit) {
-                    // Update existing habit
-                    const oldCategory = editingHabit.category;
-                    if (oldCategory === category) {
-                        // Same category, just update
-                        newCustomHabits[category] = customHabits[category].map(h => 
-                            h.id === editingHabit.id ? habit : h
-                        );
-                    } else {
-                        // Category changed, remove from old and add to new
-                        newCustomHabits[oldCategory] = customHabits[oldCategory].filter(h => h.id !== editingHabit.id);
-                        newCustomHabits[category] = [...customHabits[category], habit];
-                    }
-                } else {
-                    // Add new habit
-                    newCustomHabits[category] = [...customHabits[category], habit];
-                }
-                
-                saveCustomHabits(newCustomHabits);
-                setShowAddModal(false);
-                setEditingHabit(null);
-            };
+/* ════════════════════════════════════════════════
+   UTILS
+   ════════════════════════════════════════════════ */
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function ds(d){ return d.toISOString().split('T')[0]; }
+function getLog(date){ try{ const r=localStorage.getItem('tracking:'+date); return r?JSON.parse(r):{}; }catch(e){ return {}; } }
+function setLog(date,data){ try{ localStorage.setItem('tracking:'+date,JSON.stringify(data)); }catch(e){} }
+function toast(m){ const c=document.getElementById('toastC'),t=document.createElement('div');t.className='toast';t.textContent=m;c.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(-10px)';setTimeout(()=>t.remove(),300)},2200); }
 
-            const AddHabitModal = () => {
-                const [name, setName] = useState(editingHabit?.name || '');
-                const [icon, setIcon] = useState(editingHabit?.icon || '');
-                const [unit, setUnit] = useState(editingHabit?.unit || '');
-                const [category, setCategory] = useState(editingHabit?.category || addHabitCategory);
+function loadHabits(){
+  try{
+    const s=localStorage.getItem(HABITS_KEY);
+    if(s){habits=JSON.parse(s);}
+    else{habits={good:[...DEFAULT_GOOD],bad:[...DEFAULT_BAD]};saveHabits();}
+    if(!habits.good)habits.good=[];
+    if(!habits.bad)habits.bad=[];
+  }catch(e){habits={good:[...DEFAULT_GOOD],bad:[...DEFAULT_BAD]};saveHabits();}
+}
+function saveHabits(){try{localStorage.setItem(HABITS_KEY,JSON.stringify(habits));}catch(e){}}
 
-                const handleSubmit = (e) => {
-                    e.preventDefault();
-                    if (!name.trim()) return;
+function allHabits(){ return [...habits.good,...habits.bad]; }
+function habCat(id){ if(habits.good.find(h=>h.id===id))return 'good'; return 'bad'; }
 
-                    const habit = {
-                        id: editingHabit?.id || `custom_${Date.now()}`,
-                        name: name.trim(),
-                        icon: icon.trim() || '⭐',
-                        unit: unit.trim(),
-                        isDefault: false
-                    };
+function loadPremium(){ premium=localStorage.getItem('templis_premium')==='true'; }
+function savePremium(){ localStorage.setItem('templis_premium',premium?'true':'false'); }
 
-                    addOrUpdateHabit(habit, category);
-                };
+/* ════════════════════════════════════════════════
+   NAVIGATION
+   ════════════════════════════════════════════════ */
+function go(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
+  document.getElementById('pg-'+pg).classList.add('act');
+  document.querySelectorAll('.nav-i').forEach(n=>n.classList.remove('act'));
+  document.querySelector(`.nav-i[data-pg="${pg}"]`).classList.add('act');
+  editMode=false;
+  updateEditBtn();
+  if(pg==='today') renderToday();
+  if(pg==='stats'){ statsDetail=null; renderStats(); }
+  if(pg==='charts') renderCharts();
+  if(pg==='settings') renderSettings();
+}
 
-                if (!showAddModal) return null;
+/* ════════════════════════════════════════════════
+   DATE
+   ════════════════════════════════════════════════ */
+function shiftDate(dir){
+  const d=new Date(selectedDate+'T12:00:00');
+  d.setDate(d.getDate()+dir);
+  // Don't go into future
+  if(ds(d)>todayStr())return;
+  selectedDate=ds(d);
+  renderToday();
+}
+function goToday(){ selectedDate=todayStr(); renderToday(); }
 
-                return (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg p-6 max-w-md w-full">
-                            <h2 className="text-2xl font-bold mb-4">
-                                {editingHabit ? 'Rediģēt ieradumu' : 'Pievienot jaunu ieradumu'}
-                            </h2>
-                            
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Nosaukums *</label>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder="piemēram: Skriešana"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
+/* ════════════════════════════════════════════════
+   RENDER: TODAY
+   ════════════════════════════════════════════════ */
+function renderToday(){
+  const d=new Date(selectedDate+'T12:00:00');
+  const isToday=selectedDate===todayStr();
 
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Emoji ikona</label>
-                                    <input
-                                        type="text"
-                                        value={icon}
-                                        onChange={(e) => setIcon(e.target.value)}
-                                        placeholder="🏃"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
+  // Header date
+  document.getElementById('hdrDate').textContent=d.toLocaleDateString('lv-LV',{weekday:'short',day:'numeric',month:'long'});
+  document.getElementById('dateStr').textContent=isToday?'Šodien':d.toLocaleDateString('lv-LV',{day:'numeric',month:'short',year:'numeric'});
 
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Tips</label>
-                                    <select
-                                        value={unit}
-                                        onChange={(e) => setUnit(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="">Checkmark (✓)</option>
-                                        <option value="min">Minūtes</option>
-                                        <option value="gab.">Gabali</option>
-                                        <option value="reizes">Reizes</option>
-                                        <option value="ml">Millilitri</option>
-                                        <option value="g">Grami</option>
-                                    </select>
-                                </div>
+  const log=getLog(selectedDate);
+  const all=allHabits();
+  const total=all.length;
 
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Kategorija</label>
-                                    <select
-                                        value={category}
-                                        onChange={(e) => setCategory(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="good">Pozitīvs (veselīgs)</option>
-                                        <option value="bad">Negatīvs (izvairīties)</option>
-                                    </select>
-                                </div>
+  // Count completed
+  let done=0;
+  all.forEach(h=>{
+    const v=log[h.id];
+    if(v && v!=='0' && v!=='') done++;
+  });
 
-                                <div className="flex gap-2 pt-2">
-                                    <button
-                                        type="submit"
-                                        className="flex-1 bg-blue-500 text-white py-2 rounded-lg font-semibold active:scale-95"
-                                    >
-                                        {editingHabit ? 'Saglabāt' : 'Pievienot'}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setShowAddModal(false);
-                                            setEditingHabit(null);
-                                        }}
-                                        className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg font-semibold active:scale-95"
-                                    >
-                                        Atcelt
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                );
-            };
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('scoreNum').textContent=pct+'%';
+  document.getElementById('scoreSub').textContent=`${done} no ${total} izpildīti`;
+  document.getElementById('ringTxt').textContent=pct+'%';
+  const circ=188.5;
+  document.getElementById('ringFg').style.strokeDashoffset=circ-(circ*pct/100);
 
-            const HabitCard = ({ habit, isGood }) => {
-                const savedValue = todayData?.[habit.id] || '';
-                const [localValue, setLocalValue] = useState(savedValue);
-                const streak = calculateStreak(habit.id);
-                
-                // Update local value when date changes or data loads
-                useEffect(() => {
-                    setLocalValue(savedValue);
-                }, [savedValue, selectedDate]);
-                
-                const handleBlur = () => {
-                    if (localValue !== savedValue) {
-                        updateHabit(habit.id, localValue);
-                    }
-                };
-                
-                const handleCheckboxToggle = () => {
-                    const newValue = savedValue ? '' : '✓';
-                    setLocalValue(newValue);
-                    updateHabit(habit.id, newValue);
-                };
-                
-                return (
-                    <div className={`p-4 rounded-lg border-2 ${isGood ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl">{habit.icon}</span>
-                                <span className="font-semibold text-gray-800">{habit.name}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {streak > 0 && !editMode && (
-                                    <div className="flex items-center gap-1 text-orange-600 text-sm font-bold">
-                                        <span>🏆</span>
-                                        {streak}d
-                                    </div>
-                                )}
-                                {editMode && (
-                                    <div className="flex gap-1">
-                                        <button
-                                            onClick={() => {
-                                                setEditingHabit({ ...habit, category: isGood ? 'good' : 'bad' });
-                                                setShowAddModal(true);
-                                            }}
-                                            className="p-1 bg-blue-500 text-white rounded active:scale-95"
-                                            title="Rediģēt"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                if (confirm(`Vai tiešām dzēst "${habit.name}"?`)) {
-                                                    deleteHabit(habit.id, isGood ? 'good' : 'bad');
-                                                }
-                                            }}
-                                            className="p-1 bg-red-500 text-white rounded active:scale-95"
-                                            title="Dzēst"
-                                        >
-                                            🗑️
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        
-                        <div className="flex gap-2">
-                            {habit.unit ? (
-                                <>
-                                    <input
-                                        type="number"
-                                        inputMode="numeric"
-                                        value={localValue}
-                                        onChange={(e) => setLocalValue(e.target.value)}
-                                        onBlur={handleBlur}
-                                        placeholder="0"
-                                        disabled={editMode}
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg disabled:bg-gray-100"
-                                    />
-                                    <span className="px-3 py-2 text-gray-600 font-medium">{habit.unit}</span>
-                                </>
-                            ) : (
-                                <button
-                                    onClick={handleCheckboxToggle}
-                                    disabled={editMode}
-                                    className={`flex-1 py-3 rounded-lg font-semibold transition-all active:scale-95 disabled:opacity-50 ${
-                                        savedValue 
-                                            ? 'bg-green-500 text-white' 
-                                            : 'bg-gray-200 text-gray-600'
-                                    }`}
-                                >
-                                    {savedValue ? '✓ Izdarīts' : 'Atzīmēt'}
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                );
-            };
+  // Quick stats
+  renderQuickStats();
 
-            const getLast30DaysData = () => {
-                const days = [];
-                const today = new Date(selectedDate);
-                
-                for (let i = 29; i >= 0; i--) {
-                    const date = new Date(today);
-                    date.setDate(date.getDate() - i);
-                    const dateStr = date.toISOString().split('T')[0];
-                    
-                    try {
-                        const data = localStorage.getItem(`tracking:${dateStr}`);
-                        days.push({
-                            date: dateStr,
-                            data: data ? JSON.parse(data) : {}
-                        });
-                    } catch {
-                        days.push({ date: dateStr, data: {} });
-                    }
-                }
-                
-                return days;
-            };
+  // Habits
+  renderHabitCards();
+}
 
-            const LineChart = ({ habit, data }) => {
-                const values = data.map(day => {
-                    const val = day.data[habit.id];
-                    if (!val || val === '0' || val === '') return 0;
-                    return habit.unit ? parseFloat(val) || 0 : 1;
-                });
-                
-                const maxValue = Math.max(...values, 1);
-                const width = 300;
-                const height = 120;
-                const padding = 20;
-                
-                const points = values.map((val, i) => {
-                    const x = padding + (i / (values.length - 1)) * (width - 2 * padding);
-                    const y = height - padding - ((val / maxValue) * (height - 2 * padding));
-                    return `${x},${y}`;
-                }).join(' ');
-                
-                return (
-                    <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="text-2xl">{habit.icon}</span>
-                            <span className="font-bold text-gray-800">{habit.name}</span>
-                        </div>
-                        
-                        <svg width="100%" viewBox={`0 0 ${width} ${height}`} className="mb-2">
-                            <defs>
-                                <linearGradient id={`gradient-${habit.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3"/>
-                                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0"/>
-                                </linearGradient>
-                            </defs>
-                            
-                            {/* Grid lines */}
-                            {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => (
-                                <line
-                                    key={i}
-                                    x1={padding}
-                                    y1={height - padding - ratio * (height - 2 * padding)}
-                                    x2={width - padding}
-                                    y2={height - padding - ratio * (height - 2 * padding)}
-                                    stroke="#e5e7eb"
-                                    strokeWidth="1"
-                                />
-                            ))}
-                            
-                            {/* Area fill */}
-                            <polygon
-                                points={`${padding},${height - padding} ${points} ${width - padding},${height - padding}`}
-                                fill={`url(#gradient-${habit.id})`}
-                            />
-                            
-                            {/* Line */}
-                            <polyline
-                                points={points}
-                                fill="none"
-                                stroke="#3B82F6"
-                                strokeWidth="2"
-                            />
-                            
-                            {/* Dots */}
-                            {values.map((val, i) => {
-                                const x = padding + (i / (values.length - 1)) * (width - 2 * padding);
-                                const y = height - padding - ((val / maxValue) * (height - 2 * padding));
-                                if (val > 0) {
-                                    return (
-                                        <circle
-                                            key={i}
-                                            cx={x}
-                                            cy={y}
-                                            r="3"
-                                            fill="#3B82F6"
-                                        />
-                                    );
-                                }
-                                return null;
-                            })}
-                        </svg>
-                        
-                        <div className="flex justify-between text-xs text-gray-500">
-                            <span>{data[0]?.date ? new Date(data[0].date).toLocaleDateString('lv-LV', { day: 'numeric', month: 'short' }) : ''}</span>
-                            <span className="font-semibold text-blue-600">
-                                Vidēji: {habit.unit ? 
-                                    `${(values.reduce((a, b) => a + b, 0) / values.filter(v => v > 0).length || 0).toFixed(0)} ${habit.unit}` 
-                                    : `${((values.filter(v => v > 0).length / 30) * 100).toFixed(0)}%`}
-                            </span>
-                            <span>Šodien</span>
-                        </div>
-                    </div>
-                );
-            };
+function renderQuickStats(){
+  const c=document.getElementById('qstats');
+  const all=allHabits();
+  const log=getLog(selectedDate);
 
-            const HeatmapCalendar = ({ habit, data }) => {
-                const values = data.map(day => {
-                    const val = day.data[habit.id];
-                    if (!val || val === '0' || val === '') return 0;
-                    return habit.unit ? parseFloat(val) || 0 : 1;
-                });
-                
-                const maxValue = Math.max(...values, 1);
-                const cellSize = 10;
-                const gap = 2;
-                
-                return (
-                    <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="text-xl">{habit.icon}</span>
-                            <span className="font-semibold text-gray-800">{habit.name}</span>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-1">
-                            {values.map((val, i) => {
-                                const intensity = val / maxValue;
-                                const color = val === 0 ? '#f3f4f6' : 
-                                    intensity > 0.75 ? '#22c55e' :
-                                    intensity > 0.5 ? '#84cc16' :
-                                    intensity > 0.25 ? '#eab308' : '#fbbf24';
-                                
-                                return (
-                                    <div
-                                        key={i}
-                                        style={{
-                                            width: `${cellSize}px`,
-                                            height: `${cellSize}px`,
-                                            backgroundColor: color
-                                        }}
-                                        className="rounded-sm"
-                                        title={`${data[i].date}: ${val}${habit.unit || ''}`}
-                                    />
-                                );
-                            })}
-                        </div>
-                        
-                        <div className="flex items-center gap-2 mt-3 text-xs text-gray-600">
-                            <span>Mazāk</span>
-                            <div className="flex gap-1">
-                                {['#f3f4f6', '#fbbf24', '#eab308', '#84cc16', '#22c55e'].map((color, i) => (
-                                    <div
-                                        key={i}
-                                        style={{ backgroundColor: color }}
-                                        className="w-3 h-3 rounded-sm"
-                                    />
-                                ))}
-                            </div>
-                            <span>Vairāk</span>
-                        </div>
-                    </div>
-                );
-            };
+  // Overall streak (days where >50% done)
+  let streak=0;
+  const d2=new Date();
+  const todayLog=getLog(todayStr());
+  const todayDone=all.filter(h=>{const v=todayLog[h.id];return v&&v!=='0'&&v!=='';}).length;
+  const todayOk=all.length>0&&todayDone/all.length>=0.5;
+  if(!todayOk)d2.setDate(d2.getDate()-1);
+  while(true){
+    const dds=ds(d2);
+    const dl=getLog(dds);
+    const dd=all.filter(h=>{const v=dl[h.id];return v&&v!=='0'&&v!=='';}).length;
+    if(all.length===0||dd/all.length<0.5)break;
+    streak++;d2.setDate(d2.getDate()-1);
+  }
 
-            const ChartsView = () => {
-                const last30Days = getLast30DaysData();
-                
-                const calculateCompletionRate = (habit) => {
-                    const daysCompleted = last30Days.filter(day => {
-                        const val = day.data[habit.id];
-                        return val && val !== '0' && val !== '';
-                    }).length;
-                    return (daysCompleted / 30) * 100;
-                };
-                
-                const allHabits = [...goodHabits, ...badHabits];
-                
-                return (
-                    <div className="space-y-6">
-                        <div className="text-center">
-                            <h3 className="text-xl font-bold text-gray-800">Pēdējie 30 dienu</h3>
-                            <p className="text-sm text-gray-600">Vizuāls progresa pārskats</p>
-                        </div>
+  // Best streak
+  let best=0,cur=0;
+  const dates=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))dates.push(k.replace('tracking:',''));}
+  dates.sort();
+  for(const dt of dates){
+    const dl=getLog(dt);
+    const dd=all.filter(h=>{const v=dl[h.id];return v&&v!=='0'&&v!=='';}).length;
+    if(all.length>0&&dd/all.length>=0.5){cur++;best=Math.max(best,cur);}else cur=0;
+  }
 
-                        {/* Completion rates overview */}
-                        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-5 border-2 border-blue-200">
-                            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                <span>📊</span>
-                                Pabeigšanas līmenis
-                            </h4>
-                            <div className="space-y-3">
-                                {allHabits.slice(0, 8).map(habit => {
-                                    const rate = calculateCompletionRate(habit);
-                                    if (rate === 0) return null;
-                                    
-                                    return (
-                                        <div key={habit.id}>
-                                            <div className="flex justify-between text-sm mb-1">
-                                                <span className="font-medium text-gray-700">
-                                                    {habit.icon} {habit.name}
-                                                </span>
-                                                <span className="font-bold text-blue-600">{rate.toFixed(0)}%</span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                                <div
-                                                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
-                                                    style={{ width: `${rate}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+  // Total
+  let totalDone=0;
+  for(const dt of dates){const dl=getLog(dt);for(const h of all){const v=dl[h.id];if(v&&v!=='0'&&v!=='')totalDone++;}}
 
-                        {/* Line charts for habits with units */}
-                        <div className="space-y-4">
-                            <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                                <span>📈</span>
-                                Tendences
-                            </h4>
-                            {allHabits.filter(h => h.unit).map(habit => (
-                                <LineChart key={habit.id} habit={habit} data={last30Days} />
-                            ))}
-                        </div>
+  c.innerHTML=`
+    <div class="qstat"><div class="qstat-v" style="color:var(--acc-l)">${streak}</div><div class="qstat-l">Streak</div></div>
+    <div class="qstat"><div class="qstat-v" style="color:var(--ok)">${best}</div><div class="qstat-l">Labākais</div></div>
+    <div class="qstat"><div class="qstat-v" style="color:var(--warn)">${dates.length}</div><div class="qstat-l">Dienas</div></div>
+    <div class="qstat"><div class="qstat-v" style="color:var(--t1)">${totalDone}</div><div class="qstat-l">Kopā</div></div>
+  `;
+}
 
-                        {/* Heatmaps for all active habits */}
-                        <div className="space-y-4">
-                            <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                                <span>🔥</span>
-                                Aktivitātes kalendārs
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {allHabits.map(habit => {
-                                    const hasData = last30Days.some(day => {
-                                        const val = day.data[habit.id];
-                                        return val && val !== '0' && val !== '';
-                                    });
-                                    if (!hasData) return null;
-                                    
-                                    return <HeatmapCalendar key={habit.id} habit={habit} data={last30Days} />;
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
+function renderHabitCards(){
+  const c=document.getElementById('habitsContainer');
+  const log=getLog(selectedDate);
 
-            const WeekView = () => {
-                const calculateHabitStats = (habitId, habitUnit) => {
-                    let count = 0;
-                    let total = 0;
-                    
-                    weekData.forEach(({ data }) => {
-                        const value = data[habitId];
-                        if (value && value !== '0' && value !== '') {
-                            count++;
-                            if (habitUnit) {
-                                const numValue = parseFloat(value) || 0;
-                                total += numValue;
-                            }
-                        }
-                    });
-                    
-                    return { count, total };
-                };
+  let html='';
 
-                const getHabitDetails = (habitId, habitUnit) => {
-                    const details = [];
-                    weekData.forEach(({ date, data }) => {
-                        const value = data[habitId];
-                        if (value && value !== '0' && value !== '') {
-                            details.push({
-                                date,
-                                value: habitUnit ? parseFloat(value) || 0 : '✓'
-                            });
-                        }
-                    });
-                    // Sort by date descending (newest first)
-                    return details.sort((a, b) => b.date.localeCompare(a.date));
-                };
+  // Good habits
+  if(habits.good.length>0){
+    html+=`<div class="sec-hdr"><div class="sec-t">Pozitīvie ieradumi</div><div class="sec-badge">${habits.good.filter(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';}).length}/${habits.good.length}</div></div>`;
+    html+='<div class="hab-list">';
+    habits.good.forEach(h=>{ html+=renderHabitCard(h,log,true); });
+    html+='</div>';
+  }
 
-                const currentMonth = new Date(selectedDate).toLocaleDateString('lv-LV', { month: 'long', year: 'numeric' });
+  // Bad habits
+  if(habits.bad.length>0){
+    html+=`<div class="sec-hdr"><div class="sec-t" style="color:var(--bad)">Negatīvie ieradumi</div><div class="sec-badge">${habits.bad.filter(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';}).length}/${habits.bad.length}</div></div>`;
+    html+='<div class="hab-list">';
+    habits.bad.forEach(h=>{ html+=renderHabitCard(h,log,false); });
+    html+='</div>';
+  }
 
-                // If a habit is selected, show detailed view
-                if (selectedHabit) {
-                    const details = getHabitDetails(selectedHabit.id, selectedHabit.unit);
-                    
-                    return (
-                        <div className="space-y-4">
-                            <button 
-                                onClick={() => setSelectedHabit(null)}
-                                className="flex items-center gap-2 text-blue-600 font-semibold active:scale-95"
-                            >
-                                ← Atpakaļ uz statistiku
-                            </button>
-                            
-                            <div className="bg-white border-2 border-gray-200 rounded-lg p-5">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-3xl">{selectedHabit.icon}</span>
-                                    <h3 className="text-2xl font-bold text-gray-800">{selectedHabit.name}</h3>
-                                </div>
-                                
-                                <div className="mb-4 text-center bg-blue-50 p-3 rounded-lg">
-                                    <div className="text-sm text-gray-600">Kopā {currentMonth}</div>
-                                    <div className="text-2xl font-bold text-blue-600">
-                                        {details.length}x
-                                        {selectedHabit.unit && details.length > 0 && (
-                                            <span className="text-lg ml-2">
-                                                ({details.reduce((sum, d) => sum + (typeof d.value === 'number' ? d.value : 0), 0)} {selectedHabit.unit})
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+  c.innerHTML=html;
 
-                                <div className="space-y-2">
-                                    <h4 className="font-semibold text-gray-700 mb-3">Vēsture:</h4>
-                                    {details.map(({ date, value }) => (
-                                        <div key={date} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                                            <span className="text-gray-700 font-medium">
-                                                {new Date(date).toLocaleDateString('lv-LV', { 
-                                                    weekday: 'short', 
-                                                    day: 'numeric', 
-                                                    month: 'short',
-                                                    year: 'numeric'
-                                                })}
-                                            </span>
-                                            <span className="font-bold text-gray-800">
-                                                {typeof value === 'number' ? `${value} ${selectedHabit.unit}` : '✓'}
-                                            </span>
-                                        </div>
-                                    ))}
-                                    {details.length === 0 && (
-                                        <div className="text-center text-gray-500 py-4">
-                                            Nav ierakstu šajā mēnesī
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
+  // Attach event listeners
+  c.querySelectorAll('.hab-check').forEach(el=>{
+    el.onclick=(e)=>{e.stopPropagation();toggleCheck(el.dataset.id);};
+  });
+  c.querySelectorAll('.hab-num').forEach(el=>{
+    el.onblur=()=>saveNumValue(el.dataset.id,el.value);
+    el.onkeydown=(e)=>{if(e.key==='Enter'){el.blur();}};
+  });
+  c.querySelectorAll('.hab-edit-btn.ed').forEach(el=>{
+    el.onclick=(e)=>{e.stopPropagation();openEditHabit(el.dataset.id,el.dataset.cat);};
+  });
+  c.querySelectorAll('.hab-edit-btn.del').forEach(el=>{
+    el.onclick=(e)=>{e.stopPropagation();confirmDeleteHabit(el.dataset.id,el.dataset.cat,el.dataset.name);};
+  });
+}
 
-                // Main statistics view
-                return (
-                    <div className="space-y-6">
-                        <div className="text-center">
-                            <h3 className="text-xl font-bold text-gray-800">{currentMonth}</h3>
-                        </div>
+function renderHabitCard(h,log,isGood){
+  const v=log[h.id]||'';
+  const active=v&&v!=='0'&&v!=='';
+  const cls=active?(isGood?'done':'done-bad'):'';
+  const cat=isGood?'good':'bad';
 
-                        <div className="bg-green-50 border-2 border-green-200 rounded-lg p-5">
-                            <h3 className="text-xl font-bold text-green-700 mb-4 flex items-center gap-2">
-                                <span>📈</span>
-                                Pozitīvie
-                            </h3>
-                            <div className="space-y-3">
-                                {goodHabits.map(habit => {
-                                    const stats = calculateHabitStats(habit.id, habit.unit);
-                                    if (stats.count === 0) return null;
-                                    
-                                    return (
-                                        <button
-                                            key={habit.id}
-                                            onClick={() => setSelectedHabit(habit)}
-                                            className="w-full flex items-center justify-between bg-white p-3 rounded-lg hover:bg-green-100 active:scale-98 transition-all cursor-pointer"
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xl">{habit.icon}</span>
-                                                <span className="font-medium text-gray-800">{habit.name}</span>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="font-bold text-green-600">{stats.count}x</div>
-                                                {habit.unit && stats.total > 0 && (
-                                                    <div className="text-sm text-gray-600">
-                                                        kopā {Math.round(stats.total)} {habit.unit}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                                {goodHabits.every(h => calculateHabitStats(h.id, h.unit).count === 0) && (
-                                    <div className="text-center text-gray-500 py-4">
-                                        Vēl nav datu šajā mēnesī
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+  // Streak for this habit
+  const hstreak=calcHabitStreak(h.id);
 
-                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-5">
-                            <h3 className="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
-                                <span>📉</span>
-                                Negatīvie
-                            </h3>
-                            <div className="space-y-3">
-                                {badHabits.map(habit => {
-                                    const stats = calculateHabitStats(habit.id, habit.unit);
-                                    if (stats.count === 0) return null;
-                                    
-                                    return (
-                                        <button
-                                            key={habit.id}
-                                            onClick={() => setSelectedHabit(habit)}
-                                            className="w-full flex items-center justify-between bg-white p-3 rounded-lg hover:bg-red-100 active:scale-98 transition-all cursor-pointer"
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xl">{habit.icon}</span>
-                                                <span className="font-medium text-gray-800">{habit.name}</span>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="font-bold text-red-600">{stats.count}x</div>
-                                                {habit.unit && stats.total > 0 && (
-                                                    <div className="text-sm text-gray-600">
-                                                        kopā {Math.round(stats.total)} {habit.unit}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                                {badHabits.every(h => calculateHabitStats(h.id, h.unit).count === 0) && (
-                                    <div className="text-center text-green-600 font-semibold py-4">
-                                        🎉 Šajā mēnesī neviens negatīvs ieradums!
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
+  let inputHtml='';
+  if(h.unit){
+    inputHtml=`<input type="number" inputmode="numeric" class="hab-num" data-id="${h.id}" value="${v}" placeholder="0"><span class="hab-num-unit">${h.unit}</span>`;
+  }else{
+    inputHtml=`<div class="hab-check" data-id="${h.id}">${active?'✓':''}</div>`;
+  }
 
-            if (loading) {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
-                        <div className="text-xl text-gray-600">Ielādē...</div>
-                    </div>
-                );
-            }
+  let editHtml='';
+  if(editMode){
+    editHtml=`<div class="hab-edit-btns"><button class="hab-edit-btn ed" data-id="${h.id}" data-cat="${cat}" title="Rediģēt">✏️</button><button class="hab-edit-btn del" data-id="${h.id}" data-cat="${cat}" data-name="${h.name}" title="Dzēst">🗑️</button></div>`;
+  }
 
-            return (
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pb-8 px-4 pt-4">
-                    <AddHabitModal />
-                    
-                    {showInstall && (
-                        <div className="install-prompt bg-blue-500 text-white p-4 rounded-lg shadow-lg">
-                            <div className="flex items-center justify-between gap-3">
-                                <div className="flex-1">
-                                    <p className="font-semibold">Instalēt aplikāciju?</p>
-                                    <p className="text-sm opacity-90">Pievienot sākuma ekrānam</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button 
-                                        onClick={handleInstall}
-                                        className="bg-white text-blue-500 px-4 py-2 rounded font-semibold active:scale-95"
-                                    >
-                                        Instalēt
-                                    </button>
-                                    <button 
-                                        onClick={() => setShowInstall(false)}
-                                        className="bg-blue-600 text-white px-3 py-2 rounded active:scale-95"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+  return `<div class="hab ${cls}">
+    ${editHtml}
+    <div class="hab-icon">${h.icon}</div>
+    <div class="hab-info"><div class="hab-name">${h.name}</div>${h.unit?`<div class="hab-unit">${h.unit}</div>`:''}</div>
+    ${!editMode&&hstreak>0?`<div class="hab-streak">🏆 ${hstreak}d</div>`:''}
+    <div class="hab-input-area">${inputHtml}</div>
+  </div>`;
+}
 
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-6">
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">🏛️ Mans Templis</h1>
-                            <p className="text-gray-600 text-sm">Katru dienu tuvāk labākai versijai</p>
-                            {view === 'today' && (
-                                <div className="mt-3 flex gap-2 justify-center">
-                                    <button
-                                        onClick={() => setEditMode(!editMode)}
-                                        className={`px-4 py-2 rounded-lg font-semibold text-sm active:scale-95 ${
-                                            editMode 
-                                                ? 'bg-blue-500 text-white' 
-                                                : 'bg-gray-200 text-gray-700'
-                                        }`}
-                                    >
-                                        {editMode ? '✓ Gatavs' : '⚙️ Rediģēt ieradumus'}
-                                    </button>
-                                    {editMode && (
-                                        <button
-                                            onClick={() => {
-                                                if (confirm('Vai tiešām atjaunot visus ieradumus uz noklusējuma vērtībām? Visi pievienotie un izmainītie ieradumi tiks dzēsti!')) {
-                                                    const initialHabits = {
-                                                        good: defaultGoodHabits,
-                                                        bad: defaultBadHabits
-                                                    };
-                                                    saveCustomHabits(initialHabits);
-                                                }
-                                            }}
-                                            className="px-4 py-2 rounded-lg font-semibold text-sm bg-orange-500 text-white active:scale-95"
-                                        >
-                                            🔄 Atjaunot noklusējumus
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+function calcHabitStreak(hid){
+  let streak=0;
+  const d=new Date();
+  const tl=getLog(todayStr());
+  const tv=tl[hid];
+  if(!tv||tv==='0'||tv===''){d.setDate(d.getDate()-1);}else{streak=1;d.setDate(d.getDate()-1);}
+  while(true){
+    const dds=ds(d);
+    const dl=getLog(dds);
+    const v=dl[hid];
+    if(!v||v==='0'||v==='')break;
+    streak++;d.setDate(d.getDate()-1);
+    if(streak>365)break;
+  }
+  return streak;
+}
 
-                        <div className="flex gap-2 mb-4 bg-white rounded-lg p-2 shadow-sm">
-                            <button
-                                onClick={() => setView('today')}
-                                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all active:scale-95 ${
-                                    view === 'today' 
-                                        ? 'bg-blue-500 text-white' 
-                                        : 'text-gray-600'
-                                }`}
-                            >
-                                Šodien
-                            </button>
-                            <button
-                                onClick={() => setView('stats')}
-                                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all active:scale-95 ${
-                                    view === 'stats' 
-                                        ? 'bg-blue-500 text-white' 
-                                        : 'text-gray-600'
-                                }`}
-                            >
-                                Statistika
-                            </button>
-                            <button
-                                onClick={() => setView('charts')}
-                                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all active:scale-95 ${
-                                    view === 'charts' 
-                                        ? 'bg-blue-500 text-white' 
-                                        : 'text-gray-600'
-                                }`}
-                            >
-                                📊 Grafiki
-                            </button>
-                        </div>
+function toggleCheck(id){
+  const log=getLog(selectedDate);
+  log[id]=log[id]?'':'✓';
+  setLog(selectedDate,log);
+  renderToday();
+  if(log[id]){const h=allHabits().find(x=>x.id===id);if(h)toast(`${h.icon} ${h.name} — izdarīts!`);}
+}
 
-                        {view !== 'charts' && (
-                            <div className="mb-4 bg-white rounded-lg p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-blue-500">📅</span>
-                                    <input
-                                        type="date"
-                                        value={selectedDate}
-                                        onChange={(e) => setSelectedDate(e.target.value)}
-                                        max={new Date().toISOString().split('T')[0]}
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                                    />
-                                </div>
-                            </div>
-                        )}
+function saveNumValue(id,val){
+  const log=getLog(selectedDate);
+  log[id]=val;
+  setLog(selectedDate,log);
+  renderToday();
+}
 
-                        {view === 'today' ? (
-                            <>
-                                <div className="mb-6">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
-                                            <span>📈</span>
-                                            Veselīgas lietas
-                                        </h2>
-                                        {editMode && (
-                                            <button
-                                                onClick={() => {
-                                                    setEditingHabit(null);
-                                                    setAddHabitCategory('good');
-                                                    setShowAddModal(true);
-                                                }}
-                                                className="bg-green-500 text-white px-3 py-1 rounded-lg font-semibold text-sm active:scale-95"
-                                            >
-                                                + Pievienot
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        {goodHabits.map(habit => (
-                                            <HabitCard key={habit.id} habit={habit} isGood={true} />
-                                        ))}
-                                    </div>
-                                </div>
+/* ════════════════════════════════════════════════
+   EDIT MODE
+   ════════════════════════════════════════════════ */
+function toggleEditMode(){
+  editMode=!editMode;
+  updateEditBtn();
+  renderHabitCards();
+}
+function updateEditBtn(){
+  const b=document.getElementById('editModeBtn');
+  b.style.background=editMode?'var(--acc)':'';
+  b.style.borderColor=editMode?'var(--acc)':'';
+}
 
-                                <div>
-                                    <div className="flex items-center justify-between mb-3">
-                                        <h2 className="text-xl font-bold text-red-700 flex items-center gap-2">
-                                            <span>📉</span>
-                                            Izvairīties
-                                        </h2>
-                                        {editMode && (
-                                            <button
-                                                onClick={() => {
-                                                    setEditingHabit(null);
-                                                    setAddHabitCategory('bad');
-                                                    setShowAddModal(true);
-                                                }}
-                                                className="bg-red-500 text-white px-3 py-1 rounded-lg font-semibold text-sm active:scale-95"
-                                            >
-                                                + Pievienot
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        {badHabits.map(habit => (
-                                            <HabitCard key={habit.id} habit={habit} isGood={false} />
-                                        ))}
-                                    </div>
-                                </div>
-                            </>
-                        ) : view === 'stats' ? (
-                            <WeekView />
-                        ) : (
-                            <ChartsView />
-                        )}
+/* ════════════════════════════════════════════════
+   ADD / EDIT HABIT
+   ════════════════════════════════════════════════ */
+function openAddHabit(){
+  editingId=null;editingCat=null;
+  document.getElementById('modalT').textContent='Pievienot ieradumu';
+  document.getElementById('mName').value='';
+  document.getElementById('mUnit').value='';
+  document.getElementById('mDelBtn').style.display='none';
+  mIcon='⭐';mCat='good';
+  renderIconPicker();renderCatPicker();
+  document.getElementById('habModal').classList.add('open');
+}
 
-                        <div className="mt-6 text-center text-xs text-gray-500">
-                            Dati tiek saglabāti tikai tavā ierīcē
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+function openEditHabit(id,cat){
+  const list=habits[cat];
+  const h=list.find(x=>x.id===id);if(!h)return;
+  editingId=id;editingCat=cat;
+  document.getElementById('modalT').textContent='Rediģēt ieradumu';
+  document.getElementById('mName').value=h.name;
+  document.getElementById('mUnit').value=h.unit||'';
+  document.getElementById('mDelBtn').style.display='block';
+  mIcon=h.icon;mCat=cat;
+  renderIconPicker();renderCatPicker();
+  document.getElementById('habModal').classList.add('open');
+}
 
-        ReactDOM.render(<TempleTracker />, document.getElementById('root'));
-    </script>
+function renderIconPicker(){
+  const c=document.getElementById('mIcons');c.innerHTML='';
+  ICONS.forEach(ic=>{
+    const el=document.createElement('div');
+    el.className='icon-opt'+(ic===mIcon?' sel':'');
+    el.textContent=ic;
+    el.onclick=()=>{mIcon=ic;renderIconPicker();};
+    c.appendChild(el);
+  });
+}
+function renderCatPicker(){
+  const c=document.getElementById('mCats');
+  c.innerHTML=`<div class="cat-opt ${mCat==='good'?'sel-good':''}" onclick="mCat='good';renderCatPicker()">✅ Pozitīvs</div><div class="cat-opt ${mCat==='bad'?'sel-bad':''}" onclick="mCat='bad';renderCatPicker()">⚠️ Negatīvs</div>`;
+}
 
-    <script>
-        // Service Worker registration for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('SW registered:', registration);
-                    })
-                    .catch(err => {
-                        console.log('SW registration failed:', err);
-                    });
-            });
-        }
-    </script>
+function saveHabit(){
+  const name=document.getElementById('mName').value.trim();
+  if(!name){toast('Ievadi nosaukumu!');return;}
+  const unit=document.getElementById('mUnit').value;
+
+  if(editingId){
+    // If category changed, move
+    if(editingCat!==mCat){
+      habits[editingCat]=habits[editingCat].filter(h=>h.id!==editingId);
+      habits[mCat].push({id:editingId,name,icon:mIcon,unit});
+    }else{
+      habits[mCat]=habits[mCat].map(h=>h.id===editingId?{...h,name,icon:mIcon,unit}:h);
+    }
+    toast('Ieradums atjaunots');
+  }else{
+    const id='custom_'+Date.now();
+    habits[mCat].push({id,name,icon:mIcon,unit});
+    toast('Ieradums pievienots');
+  }
+  saveHabits();closeModal();editMode=false;updateEditBtn();renderToday();
+}
+
+function deleteHabit(){
+  if(!editingId)return;
+  const h=habits[editingCat].find(x=>x.id===editingId);
+  showConfirm('Dzēst ieradumu',`Vai tiešām dzēst "${h?.name}"?`,()=>{
+    habits[editingCat]=habits[editingCat].filter(x=>x.id!==editingId);
+    saveHabits();closeModal();editMode=false;updateEditBtn();renderToday();toast('Ieradums dzēsts');
+  });
+}
+
+function confirmDeleteHabit(id,cat,name){
+  showConfirm('Dzēst ieradumu',`Vai tiešām dzēst "${name}"?`,()=>{
+    habits[cat]=habits[cat].filter(x=>x.id!==id);
+    saveHabits();editMode=false;updateEditBtn();renderToday();toast('Ieradums dzēsts');
+  });
+}
+
+function closeModal(){document.getElementById('habModal').classList.remove('open');}
+
+/* ════════════════════════════════════════════════
+   CONFIRM
+   ════════════════════════════════════════════════ */
+function showConfirm(t,m,cb){
+  document.getElementById('cTitle').textContent=t;
+  document.getElementById('cMsg').textContent=m;
+  confirmCb=cb;
+  document.getElementById('confirmBg').classList.add('open');
+}
+function doConfirm(){closeConfirm();if(confirmCb)confirmCb();confirmCb=null;}
+function closeConfirm(){document.getElementById('confirmBg').classList.remove('open');}
+
+/* ════════════════════════════════════════════════
+   STATS VIEW
+   ════════════════════════════════════════════════ */
+function renderStats(){
+  const c=document.getElementById('statsContent');
+
+  if(statsDetail){
+    renderStatsDetail(c);return;
+  }
+
+  // Month selector
+  const curMonth=selectedDate.slice(0,7);
+  const md=new Date(curMonth+'-15');
+  const monthLabel=md.toLocaleDateString('lv-LV',{month:'long',year:'numeric'});
+
+  // Get all data for this month
+  const monthDates=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('tracking:')&&k.slice(9,16)===curMonth.slice(0,7)){
+      monthDates.push({date:k.slice(9),data:getLog(k.slice(9))});
+    }
+  }
+
+  const all=allHabits();
+
+  function calcRate(hid){
+    let count=0;
+    monthDates.forEach(({data})=>{const v=data[hid];if(v&&v!=='0'&&v!=='')count++;});
+    return monthDates.length>0?(count/monthDates.length*100):0;
+  }
+  function calcTotal(h){
+    let total=0,count=0;
+    monthDates.forEach(({data})=>{
+      const v=data[h.id];
+      if(v&&v!=='0'&&v!==''){count++;if(h.unit)total+=parseFloat(v)||0;}
+    });
+    return {count,total};
+  }
+
+  let html=`
+    <div class="month-nav">
+      <button class="date-arr" onclick="shiftMonth(-1)">‹</button>
+      <div class="month-t">${monthLabel}</div>
+      <button class="date-arr" onclick="shiftMonth(1)">›</button>
+    </div>
+  `;
+
+  // Good habits
+  if(habits.good.length>0){
+    html+=`<div class="stat-section"><div class="stat-section-t"><span>📈</span> Pozitīvie ieradumi</div>`;
+    habits.good.forEach(h=>{
+      const rate=calcRate(h.id);
+      const {count,total}=calcTotal(h);
+      html+=`<div class="stat-row" onclick="openStatsDetail('${h.id}','good')">
+        <div class="stat-icon">${h.icon}</div>
+        <div class="stat-name">${h.name}</div>
+        <div class="stat-bar-w"><div class="stat-bar good" style="width:${rate}%"></div></div>
+        <div class="stat-val good">${count>0?(h.unit?total+' '+h.unit:count+'x'):'—'}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // Bad habits
+  if(habits.bad.length>0){
+    html+=`<div class="stat-section"><div class="stat-section-t"><span>⚠️</span> Negatīvie ieradumi</div>`;
+    habits.bad.forEach(h=>{
+      const rate=calcRate(h.id);
+      const {count,total}=calcTotal(h);
+      html+=`<div class="stat-row" onclick="openStatsDetail('${h.id}','bad')">
+        <div class="stat-icon">${h.icon}</div>
+        <div class="stat-name">${h.name}</div>
+        <div class="stat-bar-w"><div class="stat-bar bad" style="width:${rate}%"></div></div>
+        <div class="stat-val bad">${count>0?(h.unit?total+' '+h.unit:count+'x'):'—'}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  c.innerHTML=html;
+}
+
+function openStatsDetail(hid,cat){
+  const h=habits[cat].find(x=>x.id===hid);
+  if(!h)return;
+  statsDetail={habit:h,cat};
+  renderStats();
+}
+
+function renderStatsDetail(c){
+  const h=statsDetail.habit;
+  const curMonth=selectedDate.slice(0,7);
+
+  // Get all entries for this habit
+  const entries=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('tracking:')&&k.slice(9,16)===curMonth.slice(0,7)){
+      const date=k.slice(9);
+      const data=getLog(date);
+      const v=data[h.id];
+      if(v&&v!=='0'&&v!==''){
+        entries.push({date,value:h.unit?(parseFloat(v)||0):'✓'});
+      }
+    }
+  }
+  entries.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const totalVal=entries.reduce((s,e)=>s+(typeof e.value==='number'?e.value:0),0);
+  const avgVal=entries.length>0&&h.unit?(totalVal/entries.length).toFixed(1):0;
+
+  let html=`
+    <div class="detail-back" onclick="statsDetail=null;renderStats()">← Atpakaļ</div>
+    <div class="detail-head"><div class="detail-icon">${h.icon}</div><div class="detail-name">${h.name}</div></div>
+    <div class="detail-summary">
+      <div class="detail-stat"><div class="detail-stat-v">${entries.length}</div><div class="detail-stat-l">Reizes</div></div>
+      ${h.unit?`<div class="detail-stat"><div class="detail-stat-v">${totalVal}</div><div class="detail-stat-l">Kopā ${h.unit}</div></div>
+      <div class="detail-stat"><div class="detail-stat-v">${avgVal}</div><div class="detail-stat-l">Vidēji ${h.unit}</div></div>`
+      :`<div class="detail-stat"><div class="detail-stat-v">${calcHabitStreak(h.id)}</div><div class="detail-stat-l">Streak</div></div>
+      <div class="detail-stat"><div class="detail-stat-v">${Math.round(entries.length/30*100)}%</div><div class="detail-stat-l">Mēnesī</div></div>`}
+    </div>
+    <div class="sec-hdr"><div class="sec-t">Vēsture</div></div>
+    <div class="detail-log">
+  `;
+
+  if(entries.length===0){
+    html+=`<div style="text-align:center;color:var(--t3);padding:20px">Nav ierakstu šajā mēnesī</div>`;
+  }else{
+    entries.forEach(e=>{
+      const d=new Date(e.date+'T12:00:00');
+      html+=`<div class="detail-entry"><div class="detail-entry-date">${d.toLocaleDateString('lv-LV',{weekday:'short',day:'numeric',month:'short'})}</div><div class="detail-entry-val">${typeof e.value==='number'?e.value+' '+h.unit:'✓'}</div></div>`;
+    });
+  }
+
+  html+=`</div>`;
+  c.innerHTML=html;
+}
+
+function shiftMonth(dir){
+  const d=new Date(selectedDate+'T12:00:00');
+  d.setMonth(d.getMonth()+dir);
+  selectedDate=ds(d);
+  statsDetail=null;
+  renderStats();
+}
+
+/* ════════════════════════════════════════════════
+   CHARTS (PREMIUM)
+   ════════════════════════════════════════════════ */
+function renderCharts(){
+  const c=document.getElementById('chartsContent');
+
+  if(!premium){
+    c.innerHTML=`
+      <div class="prem-gate">
+        <div class="prem-icon">👑</div>
+        <div class="prem-title">Premium Grafiki</div>
+        <div class="prem-desc">Atslēdz detalizētu analītiku ar grafikiem, heatmap vizualizācijām, korelācijām un personīgajiem rekordiem.</div>
+        <div class="prem-feats">
+          <div class="prem-feat"><span class="prem-feat-i">📈</span> Tendences līknes (30 dienas)</div>
+          <div class="prem-feat"><span class="prem-feat-i">🗓️</span> Aktivitātes heatmap</div>
+          <div class="prem-feat"><span class="prem-feat-i">🔗</span> Ieradumu korelācijas</div>
+          <div class="prem-feat"><span class="prem-feat-i">📊</span> Pabeigšanas % pa ieradumiem</div>
+          <div class="prem-feat"><span class="prem-feat-i">📅</span> Labākās dienas analīze</div>
+          <div class="prem-feat"><span class="prem-feat-i">🏆</span> Personiskie rekordi</div>
+        </div>
+        <button class="btn-prem" onclick="unlockPremium()"><span>👑</span> Atslēgt Premium</button>
+      </div>`;
+    return;
+  }
+
+  // Build premium analytics
+  c.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Pabeigšanas % (30 dienas)</div><div class="chart-badge">Tendence</div></div><div class="chart-area"><canvas id="chTrend"></canvas></div></div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Ieradumu veiktspēja</div><div class="chart-badge">Viss laiks</div></div><div class="chart-area"><canvas id="chPerf"></canvas></div></div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Aktivitātes heatmap</div><div class="chart-badge">12 nedēļas</div></div>
+        <div class="heatmap-labels"><div class="heatmap-lbl">P</div><div class="heatmap-lbl">O</div><div class="heatmap-lbl">T</div><div class="heatmap-lbl">C</div><div class="heatmap-lbl">Pk</div><div class="heatmap-lbl">S</div><div class="heatmap-lbl">Sv</div></div>
+        <div class="heatmap-grid" id="heatG"></div>
+      </div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Labākās dienas</div><div class="chart-badge">Pa nedēļas dienām</div></div><div class="chart-area"><canvas id="chDays"></canvas></div></div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Ieradumu korelācijas</div><div class="chart-badge">Insights</div></div><div class="corr-list" id="corrL"></div></div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Personiskie rekordi</div><div class="chart-badge">🏆</div></div><div id="recsL" style="display:flex;flex-direction:column;gap:8px"></div></div>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    buildTrendChart();
+    buildPerfChart();
+    buildHeatmap();
+    buildDaysChart();
+    buildCorrelations();
+    buildRecords();
+  },60);
+}
+
+function get30d(){
+  const data=[];const d=new Date();
+  for(let i=29;i>=0;i--){
+    const dd=new Date(d);dd.setDate(d.getDate()-i);
+    const dds=ds(dd);
+    data.push({date:dds,label:dd.toLocaleDateString('lv-LV',{day:'numeric',month:'short'}),log:getLog(dds)});
+  }
+  return data;
+}
+
+function buildTrendChart(){
+  const ctx=document.getElementById('chTrend');if(!ctx)return;
+  const data=get30d();const all=allHabits();
+  const vals=data.map(d=>{
+    const done=all.filter(h=>{const v=d.log[h.id];return v&&v!=='0'&&v!=='';}).length;
+    return all.length>0?Math.round(done/all.length*100):0;
+  });
+  new Chart(ctx,{type:'line',data:{labels:data.map(d=>d.label),datasets:[{data:vals,borderColor:'#7c5cfc',backgroundColor:'rgba(124,92,252,.1)',fill:true,tension:.4,pointRadius:0,pointHitRadius:10,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e2a',titleColor:'#e8e8f0',bodyColor:'#9898b0',borderColor:'#2a2a3a',borderWidth:1,padding:10,cornerRadius:8,callbacks:{label:c=>c.parsed.y+'%'}}},scales:{x:{display:true,grid:{display:false},ticks:{color:'#6a6a82',font:{size:9},maxTicksLimit:7}},y:{display:true,min:0,max:100,grid:{color:'rgba(42,42,58,.5)'},ticks:{color:'#6a6a82',font:{size:10},callback:v=>v+'%'}}}}});
+}
+
+function buildPerfChart(){
+  const ctx=document.getElementById('chPerf');if(!ctx)return;
+  const all=allHabits();
+  const dates=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))dates.push(k.slice(9));}
+  const total=dates.length;
+
+  const hData=all.map(h=>{
+    let done=0;
+    dates.forEach(d=>{const log=getLog(d);const v=log[h.id];if(v&&v!=='0'&&v!=='')done++;});
+    return {name:h.icon+' '+h.name,pct:total>0?Math.round(done/total*100):0,isGood:habCat(h.id)==='good'};
+  }).sort((a,b)=>b.pct-a.pct);
+
+  const colors=['#7c5cfc','#9b80ff','#34d399','#fbbf24','#f87171','#60a5fa','#a78bfa','#f472b6','#818cf8','#fb923c','#4ade80'];
+
+  new Chart(ctx,{type:'bar',data:{labels:hData.map(h=>h.name),datasets:[{data:hData.map(h=>h.pct),backgroundColor:hData.map((_,i)=>colors[i%colors.length]),borderRadius:6,barThickness:24}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'%'}}},scales:{x:{min:0,max:100,grid:{color:'rgba(42,42,58,.5)'},ticks:{color:'#6a6a82',callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#9898b0',font:{size:11}}}}}});
+}
+
+function buildHeatmap(){
+  const g=document.getElementById('heatG');if(!g)return;g.innerHTML='';
+  const all=allHabits();const d=new Date();
+  const start=new Date(d);start.setDate(d.getDate()-83);
+  while(start.getDay()!==1)start.setDate(start.getDate()-1);
+
+  for(let i=0;i<84;i++){
+    const dd=new Date(start);dd.setDate(start.getDate()+i);
+    const dds=ds(dd);const log=getLog(dds);
+    const done=all.filter(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';}).length;
+    const ratio=all.length>0?done/all.length:0;
+    const cell=document.createElement('div');cell.className='heatmap-c';
+    if(ratio>.75)cell.classList.add('l4');else if(ratio>.5)cell.classList.add('l3');else if(ratio>.25)cell.classList.add('l2');else if(ratio>0)cell.classList.add('l1');
+    cell.title=dds+': '+Math.round(ratio*100)+'%';
+    g.appendChild(cell);
+  }
+}
+
+function buildDaysChart(){
+  const ctx=document.getElementById('chDays');if(!ctx)return;
+  const all=allHabits();
+  const dayNames=['P','O','T','C','Pk','S','Sv'];
+  const dayTotals=[0,0,0,0,0,0,0];
+  const dayCounts=[0,0,0,0,0,0,0];
+
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('tracking:')){
+      const date=k.slice(9);
+      const d=new Date(date+'T12:00:00');
+      let dow=d.getDay()-1;if(dow<0)dow=6;
+      const log=getLog(date);
+      const done=all.filter(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';}).length;
+      dayTotals[dow]+=all.length>0?done/all.length:0;
+      dayCounts[dow]++;
+    }
+  }
+
+  const avgByDay=dayTotals.map((t,i)=>dayCounts[i]>0?Math.round(t/dayCounts[i]*100):0);
+
+  new Chart(ctx,{type:'bar',data:{labels:dayNames,datasets:[{data:avgByDay,backgroundColor:avgByDay.map(v=>v>=70?'#34d399':v>=40?'#fbbf24':'#f87171'),borderRadius:8,barThickness:28}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#9898b0',font:{size:11}}},y:{min:0,max:100,grid:{color:'rgba(42,42,58,.5)'},ticks:{color:'#6a6a82',callback:v=>v+'%'}}}}});
+}
+
+function buildCorrelations(){
+  const list=document.getElementById('corrL');if(!list)return;
+  const all=allHabits();
+  if(all.length<2){list.innerHTML='<div style="color:var(--t3);font-size:13px;padding:8px">Vajag vismaz 2 ieradumus.</div>';return;}
+
+  const dates=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))dates.push(k.slice(9));}
+
+  const pairs=[];
+  for(let i=0;i<all.length;i++){
+    for(let j=i+1;j<all.length;j++){
+      let both=0,aOnly=0,bOnly=0,neither=0;
+      for(const dt of dates){
+        const log=getLog(dt);
+        const a=!!(log[all[i].id]&&log[all[i].id]!=='0'&&log[all[i].id]!=='');
+        const b=!!(log[all[j].id]&&log[all[j].id]!=='0'&&log[all[j].id]!=='');
+        if(a&&b)both++;else if(a)aOnly++;else if(b)bOnly++;else neither++;
+      }
+      const n=both+aOnly+bOnly+neither;if(n<3)continue;
+      const phi=(both*neither-aOnly*bOnly)/(Math.sqrt((both+aOnly)*(both+bOnly)*(neither+aOnly)*(neither+bOnly))||1);
+      pairs.push({a:all[i],b:all[j],corr:phi});
+    }
+  }
+  pairs.sort((a,b)=>Math.abs(b.corr)-Math.abs(a.corr));
+
+  if(pairs.length===0){list.innerHTML='<div style="color:var(--t3);font-size:13px;padding:8px">Nepietiek datu.</div>';return;}
+
+  list.innerHTML=pairs.slice(0,6).map(p=>{
+    const val=(p.corr*100).toFixed(0);
+    const cls=p.corr>=0?'pos':'neg';
+    const barC=p.corr>=0?'var(--ok)':'var(--bad)';
+    return `<div class="corr-item"><div class="corr-pair">${p.a.icon} ${p.a.name} & ${p.b.icon} ${p.b.name}</div><div class="corr-bar-w"><div class="corr-bar" style="width:${Math.abs(val)}%;background:${barC}"></div></div><div class="corr-val ${cls}">${val>0?'+':''}${val}%</div></div>`;
+  }).join('');
+}
+
+function buildRecords(){
+  const c=document.getElementById('recsL');if(!c)return;
+  const all=allHabits();
+  const dates=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))dates.push(k.slice(9));}
+
+  let perfectDays=0;
+  dates.forEach(dt=>{
+    const log=getLog(dt);
+    const done=all.filter(h=>{const v=log[h.id];return v&&v!=='0'&&v!=='';}).length;
+    if(all.length>0&&done===all.length)perfectDays++;
+  });
+
+  // Most consistent
+  let bestH={name:'—',pct:0};
+  all.forEach(h=>{
+    let done=0;dates.forEach(dt=>{const log=getLog(dt);const v=log[h.id];if(v&&v!=='0'&&v!=='')done++;});
+    const p=dates.length>0?done/dates.length:0;
+    if(p>bestH.pct)bestH={name:h.icon+' '+h.name,pct:p};
+  });
+
+  const streak=calcOverallStreak();
+
+  const recs=[
+    {icon:'📅',label:'Dienas trackots',value:dates.length},
+    {icon:'🔥',label:'Pašreizējais streak',value:streak+' dienas'},
+    {icon:'⭐',label:'Perfektas dienas',value:perfectDays},
+    {icon:'🎯',label:'Konsekventākais',value:bestH.name+' ('+Math.round(bestH.pct*100)+'%)'},
+  ];
+
+  c.innerHTML=recs.map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--elev);border-radius:var(--r-s)"><span style="font-size:18px">${r.icon}</span><span style="flex:1;font-size:13px;font-weight:500;color:var(--t2)">${r.label}</span><span style="font-size:13px;font-weight:700;color:var(--t1)">${r.value}</span></div>`).join('');
+}
+
+function calcOverallStreak(){
+  const all=allHabits();let streak=0;const d=new Date();
+  const tl=getLog(todayStr());
+  const td=all.filter(h=>{const v=tl[h.id];return v&&v!=='0'&&v!=='';}).length;
+  if(all.length===0||td/all.length<.5)d.setDate(d.getDate()-1);
+  while(true){
+    const dds=ds(d);const dl=getLog(dds);
+    const dd=all.filter(h=>{const v=dl[h.id];return v&&v!=='0'&&v!=='';}).length;
+    if(all.length===0||dd/all.length<.5)break;
+    streak++;d.setDate(d.getDate()-1);if(streak>999)break;
+  }
+  return streak;
+}
+
+/* ════════════════════════════════════════════════
+   PREMIUM
+   ════════════════════════════════════════════════ */
+function unlockPremium(){premium=true;savePremium();toast('👑 Premium atslēgts!');renderCharts();renderSettings();}
+function togglePremium(){premium=!premium;savePremium();renderSettings();}
+function renderSettings(){
+  document.getElementById('togPrem').className='toggle'+(premium?' on':'');
+  document.getElementById('premStat').textContent=premium?'Aktīvs':'Bloķēts';
+  document.getElementById('premBadge').style.display=premium?'none':'block';
+}
+
+/* ════════════════════════════════════════════════
+   DATA MANAGEMENT
+   ════════════════════════════════════════════════ */
+function exportData(){
+  const data={habits,tracking:{},premium};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('tracking:')){data.tracking[k.slice(9)]=getLog(k.slice(9));}
+  }
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download='templis-export-'+todayStr()+'.json';a.click();URL.revokeObjectURL(url);
+  toast('Dati eksportēti');
+}
+
+function importData(){document.getElementById('fileInput').click();}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.habits){habits=data.habits;saveHabits();}
+      if(data.tracking){for(const d in data.tracking)setLog(d,data.tracking[d]);}
+      if(data.premium!==undefined){premium=data.premium;savePremium();}
+      toast('Dati importēti!');renderToday();renderSettings();
+    }catch(err){toast('Kļūda importējot!');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function resetDefaults(){
+  showConfirm('Atjaunot noklusējumus','Atgriezt standarta ieradumu sarakstu? Dati netiks dzēsti.',()=>{
+    habits={good:[...DEFAULT_GOOD],bad:[...DEFAULT_BAD]};
+    saveHabits();renderToday();toast('Noklusējumi atjaunoti');
+  });
+}
+
+function confirmReset(){
+  showConfirm('Dzēst visus datus','Šī darbība neatgriezeniski dzēsīs visus ieradumus un vēsturi!',()=>{
+    // Clear all tracking data
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))keys.push(k);}
+    keys.forEach(k=>localStorage.removeItem(k));
+    habits={good:[...DEFAULT_GOOD],bad:[...DEFAULT_BAD]};saveHabits();
+    premium=false;savePremium();
+    toast('Visi dati dzēsti');renderToday();renderSettings();
+  });
+}
+
+/* ════════════════════════════════════════════════
+   PWA INSTALL
+   ════════════════════════════════════════════════ */
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBar').classList.add('show');});
+window.addEventListener('appinstalled',()=>{document.getElementById('installBar').classList.remove('show');});
+function doInstall(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('installBar').classList.remove('show');});}}
+function hideInstall(){document.getElementById('installBar').classList.remove('show');}
+
+/* ════════════════════════════════════════════════
+   SERVICE WORKER
+   ════════════════════════════════════════════════ */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+/* ════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════ */
+function init(){
+  loadHabits();
+  loadPremium();
+  renderToday();
+  renderSettings();
+
+  document.getElementById('habModal').onclick=(e)=>{if(e.target===document.getElementById('habModal'))closeModal();};
+  document.getElementById('confirmBg').onclick=(e)=>{if(e.target===document.getElementById('confirmBg'))closeConfirm();};
+}
+
+init();
+</script>
 </body>
 </html>

@@ -1,7 +1,7 @@
-const CACHE_NAME = 'temple-tracker-v2';
+const CACHE_NAME = 'temple-tracker-v3';
 const urlsToCache = [
-  '/',
-  '/index.html'
+  './',
+  './index.html'
 ];
 
 self.addEventListener('install', (event) => {
