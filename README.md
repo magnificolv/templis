@@ -1,117 +1,69 @@
-# Mans Templis - PWA Instalācijas Instrukcijas
+# Mans Templis — Ikdienas Ieradumu Tracker v2.0
 
-## ✨ JAUNĀKĀS FUNKCIJAS
+Personīga PWA aplikācija ikdienas ieradumu izsekošanai ar dark theme dizainu.
 
-### 📊 GRAFIKI UN VIZUALIZĀCIJAS (Parasti aiz paywall!)
-- **📈 Tendences līknes** - redzi kā mainās tavs progress laika gaitā
-- **🔥 Aktivitātes heatmap** - vizuāls 30 dienu kalendārs katram ieradumam
-- **📊 Progress bāri** - pabeigšanas līmenis katram ieradumam
-- **📉 Vidējie rādītāji** - statistika par katru aktivitāti
-- Viss BEZMAKSAS, bez maksas sienas!
+## Funkcijas
 
-### Pilna ieradumu pārvaldība:
-- ✏️ **Rediģē JEBKURU ieradumu** - gan default, gan pievienotos
-- 🗑️ **Dzēs jebkuru ieradumu** - ja vairs nevajag
-- ➕ **Pievieno jaunus** - ar custom nosaukumiem, ikonām un tipiem
-- 🔄 **Atjauno noklusējumus** - viena poga, lai atgrieztu visu pie sākuma
+**Core Tracking**
+- Pozitīvo un negatīvo ieradumu izsekošana
+- Checkmark un numeric (minūtes, gabali, u.c.) ieradumu tipi
+- Datuma navigācija — atzīmē arī iepriekšējās dienas
+- Streak kalkulācija katram ieradumam un kopēji
+- Pilna ieradumu pārvaldība — pievieno, rediģē, dzēs
 
----
+**Statistika**
+- Mēneša pārskats ar progress bariem
+- Detalizēta vēsture katram ieradumam
+- Mēnešu navigācija
 
-## 🔄 KĀ ATJAUNOT IKONAS UN APLIKĀCIJU
+**Premium Grafiki (👑)**
+- 30 dienu tendences līniju grafiks (Chart.js)
+- Ieradumu veiktspējas salīdzinājums
+- 12 nedēļu aktivitātes heatmap
+- Labāko dienu analīze pa nedēļas dienām
+- Ieradumu korelāciju analīze (phi koeficients)
+- Personiskie rekordi
 
-Ja esi nomainījis ikonas (icon-192.png un icon-512.png) un vēlies, lai tās atjaunojas aplikācijā:
+**Datu pārvaldība**
+- JSON eksports/imports
+- Noklusējumu atjaunošana
+- Pilna datu dzēšana
 
-### Metode 1: Deinstalēt un instalēt no jauna (VIENKĀRŠĀKAIS!)
+## Tehnoloģijas
 
-1. **Android**: Uz ikonas, tad "Atinstalēt" vai "Noņemt"
-2. **Atver lapu no jauna** Chrome pārlūkā
-3. **Instalē vēlreiz** - tagad būs jaunās ikonas!
+- Vanilla HTML/CSS/JS (nav build process)
+- Chart.js grafiku vizualizācijai
+- Inter fonts
+- PWA ar Service Worker (offline atbalsts)
+- localStorage datu glabāšanai
 
-### Metode 2: Notīrīt kešu
+## Datu formāts (localStorage)
 
-1. Chrome → **Iestatījumi** (⋮)
-2. **Vietnes iestatījumi** → Atrodi savu vietni
-3. **Notīrīt & atiestatīt**
-4. Atver lapu no jauna un instalē
+- `customHabits` — ieradumu definīcijas `{good: [...], bad: [...]}`
+- `tracking:YYYY-MM-DD` — dienas dati `{habitId: value, ...}`
+- `templis_premium` — premium statuss
 
-### Metode 3: Force atjaunināt (ja esi programmētājs)
+## Instalācija
 
-1. Nomainīji ikonas GitHub repo ✅
-2. Nomainīji arī **manifest.json** un **sw.js** ✅ (esmu to izdarījis)
-3. Push izmaiņas uz GitHub
-4. Telefonā: **Aizver aplikāciju pilnībā** (swipe up → close)
-5. **Atvērt Chrome** (ne aplikāciju!) un iet uz savu vietni
-6. **Hard refresh**: Settings → Reload
-7. Tagad instalē vēlreiz
+### GitHub Pages (ieteicams)
+1. Push uz GitHub
+2. Settings → Pages → ieslēdz GitHub Pages
+3. Atver URL telefonā un instalē kā PWA
 
----
-
-## 📱 Kā instalēt Android ierīcē
-
-### Variants 1: Izmantojot Web Hostingu
-
-1. **Augšupielādē visus failus** uz web serveri:
-   - index.html
-   - manifest.json
-   - sw.js
-   - icon-192.png
-   - icon-512.png
-
-2. **Atver lapu Chrome pārlūkā** (nevis file://)
-   - Piemēram: https://tavs-domens.lv/templis/
-
-3. **Uzvedne parādīsies** automātiski pēc pāris sekundēm
-   - Vai arī Chrome izvēlnē (⋮) → "Instalēt aplikāciju"
-
-4. **Nospied "Instalēt"** un aplikācija būs sākuma ekrānā!
-
-### Variants 2: Izmantojot Lokālu Serveri (Testēšanai)
-
+### Lokāli
 ```bash
-# Terminālī, failu direktorijā:
 python3 -m http.server 8000
-
-# Tad telefonā atver:
-http://TAVA-DATORA-IP:8000
+# Atver http://localhost:8000
 ```
 
-### Variants 3: GitHub Pages (Bezmaksas)
-
-1. Izveido GitHub repo
-2. Augšupielādē visus failus
-3. Settings → Pages → Ieslēdz GitHub Pages
-4. Atver ģenerēto URL telefonā
-
-### Variants 4: Netlify Drop (Vienkāršākais!)
-
-1. Apmeklē https://app.netlify.com/drop
-2. Ievilc visus failus (index.html, manifest.json, sw.js, icon-192.png, icon-512.png)
-3. Saņem linku
-4. Atver linku telefonā un instalē!
-
-## ⚠️ SVARĪGI
-
-- **PWA NESTRĀDĀ ar file:// protokolu** - vajag HTTP/HTTPS serveri
-- **Vajag Chrome vai Edge** pārlūku Android ierīcē
-- Pēc instalācijas aplikācija strādā offline!
-- Visi dati tiek glabāti vienīgi tavā ierīcē
-
-## 🧪 Kā pārbaudīt vai PWA ir gatavs
-
-Chrome DevTools → Application tab:
-- ✅ Manifest should be valid
-- ✅ Service Worker should be registered
-- ✅ Icons should be loaded
-
-## 📂 Failu Struktūra
-
+## Failu struktūra
 ```
-/
-├── index.html          (galvenā lapa)
-├── manifest.json       (PWA konfigurācija)
-├── sw.js              (service worker)
-├── icon-192.png       (maza ikona)
-└── icon-512.png       (liela ikona)
+├── index.html       — galvenā aplikācija
+├── manifest.json    — PWA konfigurācija
+├── sw.js            — service worker
+├── icon-192.png     — mazā ikona
+└── icon-512.png     — lielā ikona
 ```
 
-Visi faili jāglabā VIENĀ direktorijā!
+---
+Templis v2.0 · Opus Edition
