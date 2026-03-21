@@ -1,5 +1,22 @@
 # Mans Templis - PWA Instalācijas Instrukcijas
 
+## ✨ JAUNĀKĀS FUNKCIJAS
+
+### 📊 GRAFIKI UN VIZUALIZĀCIJAS (Parasti aiz paywall!)
+- **📈 Tendences līknes** - redzi kā mainās tavs progress laika gaitā
+- **🔥 Aktivitātes heatmap** - vizuāls 30 dienu kalendārs katram ieradumam
+- **📊 Progress bāri** - pabeigšanas līmenis katram ieradumam
+- **📉 Vidējie rādītāji** - statistika par katru aktivitāti
+- Viss BEZMAKSAS, bez maksas sienas!
+
+### Pilna ieradumu pārvaldība:
+- ✏️ **Rediģē JEBKURU ieradumu** - gan default, gan pievienotos
+- 🗑️ **Dzēs jebkuru ieradumu** - ja vairs nevajag
+- ➕ **Pievieno jaunus** - ar custom nosaukumiem, ikonām un tipiem
+- 🔄 **Atjauno noklusējumus** - viena poga, lai atgrieztu visu pie sākuma
+
+---
+
 ## 🔄 KĀ ATJAUNOT IKONAS UN APLIKĀCIJU
 
 Ja esi nomainījis ikonas (icon-192.png un icon-512.png) un vēlies, lai tās atjaunojas aplikācijā:
