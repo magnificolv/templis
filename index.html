@@ -43,6 +43,8 @@ input[type="number"]{-moz-appearance:textfield}
 .hdr-acts{display:flex;gap:8px}
 .hdr-btn{width:36px;height:36px;border-radius:var(--r-s);border:1px solid var(--brd);background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
 .hdr-btn:hover,.hdr-btn:active{background:var(--card-h);color:var(--t1)}
+.ver-badge{padding:4px 8px;border-radius:var(--r-f);background:var(--card);border:1px solid var(--brd);font-size:10px;font-weight:600;color:var(--t3);cursor:pointer;transition:.2s;white-space:nowrap}
+.ver-badge:active{background:var(--acc-g);color:var(--acc-l);border-color:var(--acc)}
 
 /* ── MAIN ── */
 .main{max-width:600px;margin:0 auto;padding:16px}
@@ -312,6 +314,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
   </div>
   <div class="hdr-date" id="hdrDate"></div>
   <div class="hdr-acts">
+    <div class="ver-badge" id="verBadge" onclick="showVersionInfo()" title="Version info"></div>
     <button class="hdr-btn" id="editModeBtn" onclick="toggleEditMode()" title="Rediģēt">✏️</button>
   </div>
 </header>
@@ -391,7 +394,17 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
         <span class="set-arr">›</span>
       </div>
     </div>
-    <div style="text-align:center;margin-top:32px;color:var(--t3);font-size:12px">Templis v2.0 · Opus Edition</div>
+    <div class="set-grp">
+      <div class="set-grp-t">Aplikācija</div>
+      <div class="set-item" onclick="forceUpdate()">
+        <div class="set-left"><span class="set-icon">🔄</span><div><div class="set-label">Pārbaudīt atjauninājumu</div><div class="set-sub">Piespiest ielādēt jauno versiju</div></div></div>
+        <span class="set-arr">›</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;color:var(--t3);font-size:12px">
+      <div id="settingsVer"></div>
+      <div style="margin-top:4px">Opus Edition</div>
+    </div>
   </div>
 </div>
 
@@ -452,6 +465,8 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 /* ════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════ */
+const APP_VERSION = '2.0.2';
+const APP_BUILD = '20260321';
 const HABITS_KEY = 'customHabits';
 const ICONS = ['🧘','📚','💪','❤️','💑','🥩','🥗','💊','🏃','💧','🎯','🌅','🧠','✍️','🎵','🧹','🚶','🏋️','🧑‍💻','📵','🍎','🙏','🎨','🗣️','🍺','🚬','🍔','⭐','🛌','🧪','💰','🏠'];
 
@@ -1268,7 +1283,50 @@ function hideInstall(){document.getElementById('installBar').classList.remove('s
    SERVICE WORKER
    ════════════════════════════════════════════════ */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    // Check for updates immediately and every 60 seconds
+    reg.update();
+    setInterval(()=>reg.update(),60000);
+  }).catch(()=>{});
+}
+
+/* ════════════════════════════════════════════════
+   VERSION & UPDATE
+   ════════════════════════════════════════════════ */
+function updateVersionDisplay(){
+  const badge=document.getElementById('verBadge');
+  if(badge) badge.textContent='v'+APP_VERSION;
+  const sv=document.getElementById('settingsVer');
+  if(sv) sv.textContent='Templis v'+APP_VERSION+' · Build '+APP_BUILD;
+}
+
+function showVersionInfo(){
+  const swStatus=navigator.serviceWorker&&navigator.serviceWorker.controller?'aktīvs':'nav';
+  showConfirm(
+    'Versijas info',
+    `Versija: ${APP_VERSION}\nBuild: ${APP_BUILD}\nService Worker: ${swStatus}\n\nJa redzi veco versiju, spied "Atjaunot" lai piespiestu update.`,
+    ()=>forceUpdate()
+  );
+  document.getElementById('cAction').textContent='Atjaunot';
+}
+
+function forceUpdate(){
+  toast('Atjaunoju...');
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      const p=regs.map(r=>r.unregister());
+      Promise.all(p).then(()=>{
+        caches.keys().then(names=>{
+          Promise.all(names.map(n=>caches.delete(n))).then(()=>{
+            toast('Cache notīrīts! Pārlādēju...');
+            setTimeout(()=>location.reload(true),800);
+          });
+        });
+      });
+    });
+  }else{
+    location.reload(true);
+  }
 }
 
 /* ════════════════════════════════════════════════
@@ -1279,9 +1337,15 @@ function init(){
   loadPremium();
   renderToday();
   renderSettings();
+  updateVersionDisplay();
 
   document.getElementById('habModal').onclick=(e)=>{if(e.target===document.getElementById('habModal'))closeModal();};
   document.getElementById('confirmBg').onclick=(e)=>{if(e.target===document.getElementById('confirmBg'))closeConfirm();};
+
+  // Auto-check for SW updates on every load
+  if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({type:'CHECK_UPDATE'});
+  }
 }
 
 init();

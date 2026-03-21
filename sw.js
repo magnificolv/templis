@@ -1,4 +1,4 @@
-const CACHE_NAME = 'temple-tracker-v3';
+const CACHE_NAME = 'temple-tracker-v4';
 const urlsToCache = [
   './',
   './index.html'
@@ -12,10 +12,23 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+// Network-first strategy: always try to get fresh version,
+// fall back to cache only when offline
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => response || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        // Got fresh response — update cache and return it
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // Offline — serve from cache
+        return caches.match(event.request);
+      })
   );
 });
 
