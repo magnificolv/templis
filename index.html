@@ -78,7 +78,7 @@ input[type="number"]{-moz-appearance:textfield}
 .hab-group-t{font-size:12px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-left:4px}
 .hab-group-t.bad{color:var(--bad)}
 
-.hab{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);transition:.2s;cursor:default;position:relative}
+.hab{display:flex;align-items:center;gap:12px;padding:16px 16px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);transition:.2s;cursor:default;position:relative;min-height:60px}
 .hab.done{border-color:var(--ok-d);background:var(--ok-g)}
 .hab.done-bad{border-color:rgba(248,113,113,.3);background:var(--bad-g)}
 
@@ -90,11 +90,11 @@ input[type="number"]{-moz-appearance:textfield}
 
 .hab-input-area{display:flex;align-items:center;gap:8px;flex-shrink:0}
 
-.hab-check{width:28px;height:28px;border-radius:var(--r-s);border:2px solid var(--brd2);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:.2s;font-size:14px;color:transparent;background:transparent}
+.hab-check{width:36px;height:36px;border-radius:var(--r-s);border:2px solid var(--brd2);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:.2s;font-size:16px;color:transparent;background:transparent}
 .hab.done .hab-check,.hab.done-bad .hab-check{background:var(--ok);border-color:var(--ok);color:#fff}
 .hab.done-bad .hab-check{background:var(--bad);border-color:var(--bad)}
 
-.hab-num{width:60px;padding:6px 8px;border:1px solid var(--brd);border-radius:var(--r-s);background:var(--input);color:var(--t1);font-size:14px;font-family:inherit;text-align:center;transition:.2s}
+.hab-num{width:68px;padding:10px 8px;border:1px solid var(--brd);border-radius:var(--r-s);background:var(--input);color:var(--t1);font-size:16px;font-family:inherit;text-align:center;transition:.2s}
 .hab-num:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
 .hab-num-unit{font-size:11px;color:var(--t3);font-weight:600;min-width:24px}
 
@@ -195,12 +195,13 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .chart-t{font-size:14px;font-weight:700}
 .chart-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--r-f);background:var(--acc-g);color:var(--acc-l)}
 .chart-area{width:100%;height:200px;position:relative}
+.chart-area.tall{height:auto;min-height:200px}
 .chart-area canvas{width:100%!important;height:100%!important}
 
 .heatmap-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
 .heatmap-lbl{font-size:9px;font-weight:600;color:var(--t3);text-align:center;text-transform:uppercase}
 .heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.heatmap-c{aspect-ratio:1;border-radius:3px;background:var(--elev);transition:.2s}
+.heatmap-c{aspect-ratio:1;border-radius:4px;background:var(--elev);transition:.2s;min-width:0}
 .heatmap-c.l1{background:rgba(124,92,252,.15)}.heatmap-c.l2{background:rgba(124,92,252,.3)}.heatmap-c.l3{background:rgba(124,92,252,.5)}.heatmap-c.l4{background:rgba(124,92,252,.75)}
 
 .corr-list{display:flex;flex-direction:column;gap:8px}
@@ -228,7 +229,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 
 /* ── BOTTOM NAV ── */
 .bnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);background:rgba(10,10,15,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:space-around;z-index:100}
-.nav-i{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;transition:.2s}
+.nav-i{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;transition:.2s;min-width:56px}
 .nav-ic{font-size:22px}.nav-lb{font-size:10px;font-weight:600;color:var(--t3);transition:.2s}
 .nav-i.act .nav-ic{filter:brightness(1.2)}.nav-i.act .nav-lb{color:var(--acc-l)}
 .nav-i.act::before{content:'';position:absolute;top:-1px;width:24px;height:2px;background:var(--acc);border-radius:0 0 2px 2px}
@@ -238,6 +239,48 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .toast-c{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .toast{padding:10px 18px;background:var(--elev);border:1px solid var(--brd);border-radius:var(--r-f);font-size:13px;font-weight:600;color:var(--t1);box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transform:translateY(-10px);animation:tIn .3s ease forwards;pointer-events:auto;white-space:nowrap}
 @keyframes tIn{to{opacity:1;transform:translateY(0)}}
+
+/* ── MOBILE OPTIMIZATIONS ── */
+@media(max-width:480px){
+  .hdr{padding:10px 12px}
+  .logo-t{font-size:16px}
+  .hdr-date{font-size:11px}
+  .main{padding:12px}
+  .score-banner{padding:16px}
+  .score-num{font-size:36px}
+  .ring{width:60px;height:60px}
+  .qstats{gap:8px}
+  .qstat{padding:10px 8px}
+  .qstat-v{font-size:20px}
+  .hab{padding:14px 12px;gap:10px}
+  .hab-icon{font-size:20px}
+  .hab-name{font-size:13px}
+  .hab-num{width:62px;padding:10px 6px;font-size:16px}
+  .hab-check{width:34px;height:34px}
+  .hab-streak{font-size:11px}
+  .date-arr{width:40px;height:40px;font-size:18px}
+  .date-str{font-size:14px;padding:8px 16px}
+  .add-btn{padding:16px;font-size:15px}
+  .bnav{height:calc(60px + var(--safe-b))}
+  .nav-ic{font-size:24px}
+  .nav-lb{font-size:10px}
+  .nav-i{padding:8px 10px}
+  .chart-card{padding:16px}
+  .chart-t{font-size:13px}
+  .heatmap-grid{gap:4px}
+  .heatmap-c{border-radius:3px}
+  .corr-pair{font-size:11px}
+  .stat-row{padding:8px 6px}
+  .modal{padding:20px 16px}
+  .sec-t{font-size:15px}
+}
+
+/* Larger phones */
+@media(min-width:481px) and (max-width:767px){
+  .hab-check{width:36px;height:36px}
+  .hab-num{padding:10px 8px;font-size:16px}
+  .date-arr{width:40px;height:40px}
+}
 
 /* ── CONFIRM ── */
 .confirm-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:250;display:none;align-items:center;justify-content:center;padding:20px}
@@ -961,7 +1004,7 @@ function renderCharts(){
   c.innerHTML=`
     <div style="display:flex;flex-direction:column;gap:16px">
       <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Pabeigšanas % (30 dienas)</div><div class="chart-badge">Tendence</div></div><div class="chart-area"><canvas id="chTrend"></canvas></div></div>
-      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Ieradumu veiktspēja</div><div class="chart-badge">Viss laiks</div></div><div class="chart-area"><canvas id="chPerf"></canvas></div></div>
+      <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Ieradumu veiktspēja</div><div class="chart-badge">Viss laiks</div></div><div class="chart-area tall"><canvas id="chPerf"></canvas></div></div>
       <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Aktivitātes heatmap</div><div class="chart-badge">12 nedēļas</div></div>
         <div class="heatmap-labels"><div class="heatmap-lbl">P</div><div class="heatmap-lbl">O</div><div class="heatmap-lbl">T</div><div class="heatmap-lbl">C</div><div class="heatmap-lbl">Pk</div><div class="heatmap-lbl">S</div><div class="heatmap-lbl">Sv</div></div>
         <div class="heatmap-grid" id="heatG"></div>
@@ -1015,9 +1058,15 @@ function buildPerfChart(){
     return {name:h.icon+' '+h.name,pct:total>0?Math.round(done/total*100):0,isGood:habCat(h.id)==='good'};
   }).sort((a,b)=>b.pct-a.pct);
 
+  // Dynamic height: 40px per habit, min 200px
+  const chartH=Math.max(200, hData.length*44 + 40);
+  const wrapper=ctx.parentElement;
+  wrapper.classList.add('tall');
+  wrapper.style.height=chartH+'px';
+
   const colors=['#7c5cfc','#9b80ff','#34d399','#fbbf24','#f87171','#60a5fa','#a78bfa','#f472b6','#818cf8','#fb923c','#4ade80'];
 
-  new Chart(ctx,{type:'bar',data:{labels:hData.map(h=>h.name),datasets:[{data:hData.map(h=>h.pct),backgroundColor:hData.map((_,i)=>colors[i%colors.length]),borderRadius:6,barThickness:24}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'%'}}},scales:{x:{min:0,max:100,grid:{color:'rgba(42,42,58,.5)'},ticks:{color:'#6a6a82',callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#9898b0',font:{size:11}}}}}});
+  new Chart(ctx,{type:'bar',data:{labels:hData.map(h=>h.name),datasets:[{data:hData.map(h=>h.pct),backgroundColor:hData.map((_,i)=>colors[i%colors.length]),borderRadius:6,barThickness:32,maxBarThickness:36}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e2a',titleColor:'#e8e8f0',bodyColor:'#9898b0',borderColor:'#2a2a3a',borderWidth:1,padding:10,cornerRadius:8,callbacks:{label:c=>c.parsed.x+'%'}}},scales:{x:{min:0,max:100,grid:{color:'rgba(42,42,58,.5)'},ticks:{color:'#6a6a82',font:{size:12},callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#e8e8f0',font:{size:13,weight:'500'},padding:8}}}}});
 }
 
 function buildHeatmap(){
