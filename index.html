@@ -10,9 +10,9 @@
 <meta name="description" content="Ikdienas veselības ieradumu trackings">
 <link rel="apple-touch-startup-image" href="icon-512.png">
 <title>Mans Templis</title>
-<link rel="manifest" href="manifest.json?v=2.2">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.2">
-<link rel="apple-touch-icon" href="icon-512.png?v=2.2">
+<link rel="manifest" href="manifest.json?v=2.3">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.3">
+<link rel="apple-touch-icon" href="icon-512.png?v=2.3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -311,22 +311,24 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .install-bar-x{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
 /* ── SPLASH SCREEN ── */
-.splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
+.splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s cubic-bezier(.4,0,.2,1),visibility .8s cubic-bezier(.4,0,.2,1)}
 .splash.hide{opacity:0;visibility:hidden}
-.splash-icon{width:88px;height:88px;border-radius:22px;overflow:hidden;margin-bottom:20px;animation:splashPulse 1.5s ease infinite}
+.splash-icon{width:120px;height:120px;border-radius:28px;overflow:hidden;margin-bottom:28px;opacity:0;transform:scale(.8);animation:splashIconIn .9s cubic-bezier(.34,1.56,.64,1) .15s forwards;box-shadow:0 8px 40px rgba(124,92,252,.35)}
 .splash-icon img{width:100%;height:100%;display:block}
-.splash-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--t1);margin-bottom:6px}
-.splash-sub{font-size:13px;color:var(--t3);font-weight:500;margin-bottom:32px}
-.splash-loader{width:40px;height:40px;border:3px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:splashSpin .8s linear infinite}
+.splash-name{font-size:28px;font-weight:800;letter-spacing:-.5px;color:var(--t1);margin-bottom:8px;opacity:0;transform:translateY(12px);animation:splashFadeUp .7s ease .7s forwards}
+.splash-sub{font-size:14px;color:var(--t3);font-weight:500;margin-bottom:40px;opacity:0;transform:translateY(10px);animation:splashFadeUp .7s ease .95s forwards}
+.splash-loader{width:36px;height:36px;border:3px solid var(--brd);border-top-color:var(--acc);border-radius:50%;opacity:0;animation:splashSpin .8s linear infinite,splashFadeIn .5s ease 1.2s forwards}
 @keyframes splashSpin{to{transform:rotate(360deg)}}
-@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes splashIconIn{to{opacity:1;transform:scale(1)}}
+@keyframes splashFadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes splashFadeIn{to{opacity:1}}
 </style>
 </head>
 <body>
 
 <!-- SPLASH SCREEN -->
 <div class="splash" id="splash">
-  <div class="splash-icon"><img src="icon-192.png" alt="Templis"></div>
+  <div class="splash-icon"><img src="icon-192.png?v=2.3" alt="Templis"></div>
   <div class="splash-name">Mans Templis</div>
   <div class="splash-sub">Ieradumu trackings</div>
   <div class="splash-loader"></div>
@@ -496,8 +498,8 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 /* ════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════ */
-const APP_VERSION = '2.2.0';
-const APP_BUILD = '20260322';
+const APP_VERSION = '2.3.0';
+const APP_BUILD = '20260322b';
 const HABITS_KEY = 'customHabits';
 const ICONS = ['🧘','📚','💪','❤️','💑','🥩','🥗','💊','🏃','💧','🎯','🌅','🧠','✍️','🎵','🧹','🚶','🏋️','🧑‍💻','📵','🍎','🙏','🎨','🗣️','🍺','🚬','🍔','⭐','🛌','🧪','💰','🏠'];
 
@@ -1422,7 +1424,7 @@ function forceUpdate(){
    ════════════════════════════════════════════════ */
 function hideSplash(){
   const s=document.getElementById('splash');
-  if(s){s.classList.add('hide');setTimeout(()=>s.remove(),500);}
+  if(s){s.classList.add('hide');setTimeout(()=>s.remove(),900);}
 }
 
 function init(){
@@ -1440,8 +1442,8 @@ function init(){
     navigator.serviceWorker.controller.postMessage({type:'CHECK_UPDATE'});
   }
 
-  // Hide splash after app is ready (min 600ms for smooth feel)
-  setTimeout(hideSplash, 600);
+  // Hide splash after full animation plays (icon .9s + text .7s + loader .5s)
+  setTimeout(hideSplash, 2200);
 }
 
 init();
