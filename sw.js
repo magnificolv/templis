@@ -1,4 +1,4 @@
-const CACHE_NAME = 'temple-tracker-v4';
+const CACHE_NAME = 'temple-tracker-v5';
 const urlsToCache = [
   './',
   './index.html'

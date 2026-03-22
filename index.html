@@ -10,9 +10,9 @@
 <meta name="description" content="Ikdienas veselības ieradumu trackings">
 <link rel="apple-touch-startup-image" href="icon-512.png">
 <title>Mans Templis</title>
-<link rel="manifest" href="manifest.json?v=2.0">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.0">
-<link rel="apple-touch-icon" href="icon-512.png?v=2.0">
+<link rel="manifest" href="manifest.json?v=2.2">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.2">
+<link rel="apple-touch-icon" href="icon-512.png?v=2.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -309,9 +309,28 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .install-bar-txt{flex:1;font-size:13px;font-weight:600;color:#fff}
 .install-bar-btn{padding:8px 16px;border-radius:var(--r-s);background:#fff;color:var(--acc-d);font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
 .install-bar-x{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* ── SPLASH SCREEN ── */
+.splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
+.splash.hide{opacity:0;visibility:hidden}
+.splash-icon{width:88px;height:88px;border-radius:22px;overflow:hidden;margin-bottom:20px;animation:splashPulse 1.5s ease infinite}
+.splash-icon img{width:100%;height:100%;display:block}
+.splash-name{font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--t1);margin-bottom:6px}
+.splash-sub{font-size:13px;color:var(--t3);font-weight:500;margin-bottom:32px}
+.splash-loader{width:40px;height:40px;border:3px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:splashSpin .8s linear infinite}
+@keyframes splashSpin{to{transform:rotate(360deg)}}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 </style>
 </head>
 <body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-icon"><img src="icon-192.png" alt="Templis"></div>
+  <div class="splash-name">Mans Templis</div>
+  <div class="splash-sub">Ieradumu trackings</div>
+  <div class="splash-loader"></div>
+</div>
 
 <svg style="position:absolute;width:0;height:0"><defs>
   <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
@@ -477,8 +496,8 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 /* ════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════ */
-const APP_VERSION = '2.1.0';
-const APP_BUILD = '20260321b';
+const APP_VERSION = '2.2.0';
+const APP_BUILD = '20260322';
 const HABITS_KEY = 'customHabits';
 const ICONS = ['🧘','📚','💪','❤️','💑','🥩','🥗','💊','🏃','💧','🎯','🌅','🧠','✍️','🎵','🧹','🚶','🏋️','🧑‍💻','📵','🍎','🙏','🎨','🗣️','🍺','🚬','🍔','⭐','🛌','🧪','💰','🏠'];
 
@@ -1401,6 +1420,11 @@ function forceUpdate(){
 /* ════════════════════════════════════════════════
    INIT
    ════════════════════════════════════════════════ */
+function hideSplash(){
+  const s=document.getElementById('splash');
+  if(s){s.classList.add('hide');setTimeout(()=>s.remove(),500);}
+}
+
 function init(){
   loadHabits();
   loadPremium();
@@ -1415,6 +1439,9 @@ function init(){
   if('serviceWorker' in navigator && navigator.serviceWorker.controller){
     navigator.serviceWorker.controller.postMessage({type:'CHECK_UPDATE'});
   }
+
+  // Hide splash after app is ready (min 600ms for smooth feel)
+  setTimeout(hideSplash, 600);
 }
 
 init();
