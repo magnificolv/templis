@@ -191,16 +191,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .detail-entry-date{font-size:13px;color:var(--t2);font-weight:500}
 .detail-entry-val{font-size:14px;font-weight:700;color:var(--t1)}
 
-/* ── CHARTS / PREMIUM ── */
-.prem-gate{text-align:center;padding:40px 20px}
-.prem-icon{font-size:48px;margin-bottom:16px}
-.prem-title{font-size:22px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.prem-desc{font-size:14px;color:var(--t2);margin-bottom:24px;line-height:1.6;max-width:350px;margin-left:auto;margin-right:auto}
-.prem-feats{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto 28px;text-align:left}
-.prem-feat{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--brd);border-radius:var(--r-m);font-size:13px;font-weight:500;color:var(--t2)}
-.prem-feat-i{font-size:18px}
-.btn-prem{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--gold),#d97706);color:#1a1a2e;border:none;border-radius:var(--r-f);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s;box-shadow:0 4px 20px var(--gold-g)}
-.btn-prem:hover{transform:translateY(-1px)}
+/* ── CHARTS ── */
 
 .chart-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r-l);padding:20px;margin-bottom:16px;overflow:hidden}
 .chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -245,7 +236,6 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .nav-ic{font-size:22px}.nav-lb{font-size:10px;font-weight:600;color:var(--t3);transition:.2s}
 .nav-i.act .nav-ic{filter:brightness(1.2)}.nav-i.act .nav-lb{color:var(--acc-l)}
 .nav-i.act::before{content:'';position:absolute;top:-1px;width:24px;height:2px;background:var(--acc);border-radius:0 0 2px 2px}
-.nav-prem{position:absolute;top:2px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
 
 /* ── TOAST ── */
 .toast-c{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
@@ -394,13 +384,6 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
   <div class="pg" id="pg-settings">
     <div class="sec-hdr" style="margin-bottom:20px"><div class="sec-t">Iestatījumi</div></div>
     <div class="set-grp">
-      <div class="set-grp-t">Premium</div>
-      <div class="set-item" onclick="togglePremium()">
-        <div class="set-left"><span class="set-icon">👑</span><div><div class="set-label">Premium Grafiki</div><div class="set-sub" id="premStat">Bloķēts</div></div></div>
-        <div class="toggle" id="togPrem"></div>
-      </div>
-    </div>
-    <div class="set-grp">
       <div class="set-grp-t">Dati</div>
       <div class="set-item" onclick="exportData()">
         <div class="set-left"><span class="set-icon">📤</span><div><div class="set-label">Eksportēt datus</div><div class="set-sub">JSON formātā</div></div></div>
@@ -437,7 +420,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 <nav class="bnav">
   <div class="nav-i act" onclick="go('today')" data-pg="today"><span class="nav-ic">📋</span><span class="nav-lb">Šodien</span></div>
   <div class="nav-i" onclick="go('stats')" data-pg="stats"><span class="nav-ic">📊</span><span class="nav-lb">Statistika</span></div>
-  <div class="nav-i" onclick="go('charts')" data-pg="charts"><span class="nav-ic">📈</span><span class="nav-lb">Grafiki</span><span class="nav-prem" id="premBadge"></span></div>
+  <div class="nav-i" onclick="go('charts')" data-pg="charts"><span class="nav-ic">📈</span><span class="nav-lb">Grafiki</span></div>
   <div class="nav-i" onclick="go('settings')" data-pg="settings"><span class="nav-ic">⚙️</span><span class="nav-lb">Iestatījumi</span></div>
 </nav>
 
@@ -520,7 +503,7 @@ let editingCat = null;
 let mIcon = '⭐';
 let mCat = 'good';
 let confirmCb = null;
-let premium = false;
+let premium = true;
 let deferredPrompt = null;
 let statsDetail = null; // {habit, cat} or null
 
@@ -547,8 +530,6 @@ function saveHabits(){try{localStorage.setItem(HABITS_KEY,JSON.stringify(habits)
 function allHabits(){ return [...habits.good,...habits.bad]; }
 function habCat(id){ if(habits.good.find(h=>h.id===id))return 'good'; return 'bad'; }
 
-function loadPremium(){ premium=localStorage.getItem('templis_premium')==='true'; }
-function savePremium(){ localStorage.setItem('templis_premium',premium?'true':'false'); }
 
 /* ════════════════════════════════════════════════
    NAVIGATION
@@ -1090,26 +1071,7 @@ function shiftMonth(dir){
 function renderCharts(){
   const c=document.getElementById('chartsContent');
 
-  if(!premium){
-    c.innerHTML=`
-      <div class="prem-gate">
-        <div class="prem-icon">👑</div>
-        <div class="prem-title">Premium Grafiki</div>
-        <div class="prem-desc">Atslēdz detalizētu analītiku ar grafikiem, heatmap vizualizācijām, korelācijām un personīgajiem rekordiem.</div>
-        <div class="prem-feats">
-          <div class="prem-feat"><span class="prem-feat-i">📈</span> Tendences līknes (30 dienas)</div>
-          <div class="prem-feat"><span class="prem-feat-i">🗓️</span> Aktivitātes heatmap</div>
-          <div class="prem-feat"><span class="prem-feat-i">🔗</span> Ieradumu korelācijas</div>
-          <div class="prem-feat"><span class="prem-feat-i">📊</span> Pabeigšanas % pa ieradumiem</div>
-          <div class="prem-feat"><span class="prem-feat-i">📅</span> Labākās dienas analīze</div>
-          <div class="prem-feat"><span class="prem-feat-i">🏆</span> Personiskie rekordi</div>
-        </div>
-        <button class="btn-prem" onclick="unlockPremium()"><span>👑</span> Atslēgt Premium</button>
-      </div>`;
-    return;
-  }
-
-  // Build premium analytics
+  // Build analytics
   c.innerHTML=`
     <div style="display:flex;flex-direction:column;gap:16px">
       <div class="chart-card"><div class="chart-hdr"><div class="chart-t">Pabeigšanas % (30 dienas)</div><div class="chart-badge">Tendence</div></div><div class="chart-area"><canvas id="chTrend"></canvas></div></div>
@@ -1304,21 +1266,15 @@ function calcOverallStreak(){
 }
 
 /* ════════════════════════════════════════════════
-   PREMIUM
+   SETTINGS
    ════════════════════════════════════════════════ */
-function unlockPremium(){premium=true;savePremium();toast('👑 Premium atslēgts!');renderCharts();renderSettings();}
-function togglePremium(){premium=!premium;savePremium();renderSettings();}
-function renderSettings(){
-  document.getElementById('togPrem').className='toggle'+(premium?' on':'');
-  document.getElementById('premStat').textContent=premium?'Aktīvs':'Bloķēts';
-  document.getElementById('premBadge').style.display=premium?'none':'block';
-}
+function renderSettings(){}
 
 /* ════════════════════════════════════════════════
    DATA MANAGEMENT
    ════════════════════════════════════════════════ */
 function exportData(){
-  const data={habits,tracking:{},premium};
+  const data={habits,tracking:{}};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(k&&k.startsWith('tracking:')){data.tracking[k.slice(9)]=getLog(k.slice(9));}
@@ -1338,7 +1294,6 @@ function handleImport(e){
       const data=JSON.parse(ev.target.result);
       if(data.habits){habits=data.habits;saveHabits();}
       if(data.tracking){for(const d in data.tracking)setLog(d,data.tracking[d]);}
-      if(data.premium!==undefined){premium=data.premium;savePremium();}
       toast('Dati importēti!');renderToday();renderSettings();
     }catch(err){toast('Kļūda importējot!');}
   };
@@ -1360,7 +1315,6 @@ function confirmReset(){
     for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tracking:'))keys.push(k);}
     keys.forEach(k=>localStorage.removeItem(k));
     habits={good:[...DEFAULT_GOOD],bad:[...DEFAULT_BAD]};saveHabits();
-    premium=false;savePremium();
     toast('Visi dati dzēsti');renderToday();renderSettings();
   });
 }
@@ -1421,7 +1375,6 @@ function hideSplash(){
 
 function init(){
   loadHabits();
-  loadPremium();
   renderToday();
   renderSettings();
   updateVersionDisplay();
